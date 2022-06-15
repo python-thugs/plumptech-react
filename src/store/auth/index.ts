@@ -5,7 +5,7 @@ export type IState = Partial<IEmployee>;
 
 const initialState: IState = {};
 
-const setUserAction = createAction<IEmployee, "setUser">("setUser");
+export const setUserAction = createAction<IEmployee, "setUser">("setUser");
 
 export const authSlice = createSlice<IState, SliceCaseReducers<IState>>({
   name: "auth",

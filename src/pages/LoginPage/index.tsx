@@ -6,10 +6,14 @@ import Button from "@mui/material/Button";
 import {ReactComponent as BG} from "./background.svg";
 import "./styles.css";
 import {login} from "../../api/auth";
+import {useAppDispatch} from "../../store";
+import {setUserAction} from "../../store/auth";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+
+  const dispatch = useAppDispatch();
 
   const handleLoginClick = useCallback<React.FormEventHandler<HTMLFormElement>>(
     e => {
@@ -17,7 +21,7 @@ const LoginPage = () => {
       if (!userName || !password) return;
       login({username: userName, password})
         .then(result => {
-          alert(result.name);
+          dispatch(setUserAction(result));
         })
         .catch(e => {
           console.error("login error:", e);
