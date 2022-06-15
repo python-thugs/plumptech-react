@@ -9,20 +9,19 @@ function App() {
   const user = useAppSelector(store => store.auth);
 
   const appView = useMemo(() => {
-    debugger;
-    switch (user.type) {
-      case PostEnum.ADMIN:
+    switch (user.post) {
+      case PostEnum.Администратор:
         return <AdminView />;
       default:
         return null;
     }
-  }, [user.type]);
+  }, [user.post]);
 
   return (
     <div className="h-full w-full">
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={appView} />
+        <Route path="*" element={appView} />
       </Routes>
     </div>
   );

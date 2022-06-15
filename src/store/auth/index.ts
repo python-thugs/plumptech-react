@@ -5,7 +5,10 @@ export type IState = Partial<IEmployee>;
 
 const initialState: IState = {};
 
-export const setUserAction = createAction<IEmployee, "setUser">("setUser");
+export const setUserAction = createAction<
+  IEmployee & {post_id: number},
+  "setUser"
+>("setUser");
 
 export const authSlice = createSlice<IState, SliceCaseReducers<IState>>({
   name: "auth",
@@ -16,7 +19,7 @@ export const authSlice = createSlice<IState, SliceCaseReducers<IState>>({
       .addCase(setUserAction, (state, {payload}) => {
         state.id = payload.id;
         state.name = payload.name;
-        state.type = payload.type;
+        state.post = payload.post_id;
         state.username = payload.username;
       })
       .addDefaultCase(() => {});

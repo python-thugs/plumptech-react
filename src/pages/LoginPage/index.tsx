@@ -8,12 +8,14 @@ import "./styles.css";
 import {login} from "../../api/auth";
 import {useAppDispatch} from "../../store";
 import {setUserAction} from "../../store/auth";
+import {useNavigate} from "react-router-dom";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleLoginClick = useCallback<React.FormEventHandler<HTMLFormElement>>(
     e => {
@@ -22,12 +24,13 @@ const LoginPage = () => {
       login({username: userName, password})
         .then(result => {
           dispatch(setUserAction(result));
+          navigate("/", {replace: true});
         })
         .catch(e => {
           console.error("login error:", e);
         });
     },
-    [userName, password]
+    [userName, password, dispatch]
   );
 
   const onUserNameChange = useCallback<
