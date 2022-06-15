@@ -5,15 +5,20 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import {StyledEngineProvider} from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import ThemeProvider from "@mui/material/styles/ThemeProvider";
+import createTheme from "@mui/material/styles/createTheme";
 
+const theme = createTheme({});
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
     <StyledEngineProvider injectFirst>
-      <App />
-      <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <App />
+        <CssBaseline />
+      </ThemeProvider>
     </StyledEngineProvider>
   </React.StrictMode>
 );

@@ -1,0 +1,13 @@
+<svg class="h-full w-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="clip0_10_454">
+            <rect width="1280" height="720" fill="white"/>
+        </clipPath>
+    </defs>
+    <g clip-path="url(#clip0_10_454)">
+        <circle class="left-circle" r="921" />
+        <circle class="left-bottom-circle" cx="466.5" cy="682.5" r="219.5" />
+        <circle class="top-circle" cx="1146.5" cy="-309.5" r="466.5" />
+        <circle class="right-bottom-circle" cx="1210.5" cy="614.5" r="133.5" />
+    </g>
+</svg>
