@@ -11,7 +11,7 @@ const LoginPage = () => {
     <div className="relative overflow-hidden h-full w-full">
       <BG />
       <Paper
-        className="absolute left-12 top-0 bottom-0 my-auto rounded-lg rounded-bl-[3rem] rounded-tr-[3rem] w-max h-max px-8 py-12"
+        className="absolute left-16 top-0 bottom-0 my-auto rounded-lg rounded-bl-[3rem] rounded-tr-[3rem] w-max h-max px-12 py-12"
         elevation={3}
       >
         <FormGroup className="w-full gap-8">
