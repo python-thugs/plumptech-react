@@ -11,23 +11,36 @@ const LoginPage = () => {
     <div className="relative overflow-hidden h-full w-full">
       <BG />
       <Paper
-        className="absolute left-16 top-0 bottom-0 my-auto rounded-lg rounded-bl-[3rem] rounded-tr-[3rem] w-max h-max px-12 py-12"
+        className="absolute left-16 top-0 bottom-0 my-auto rounded-lg rounded-bl-[2rem] rounded-tr-[2rem] w-max h-max px-12 py-12"
         elevation={3}
       >
         <FormGroup className="w-full gap-8">
           <Text
             variant="h3"
             component="h1"
-            className="font-semibold leading-normal"
+            className="font-semibold leading-normal uppercase"
           >
             Вход в систему
           </Text>
-          <TextField label="Имя пользователя" />
-          <TextField label="Пароль" type="password" />
+          <TextField
+            aria-label="Имя пользователя"
+            label="Имя пользователя"
+            name="username"
+            id="username"
+            autoComplete="nickname"
+          />
+          <TextField
+            aria-label="Пароль"
+            label="Пароль"
+            type="password"
+            name="password"
+            id="password"
+            autoComplete="current-password"
+          />
           <Button
             variant="contained"
+            className="text-base font-medium py-3"
             size="large"
-            style={{fontSize: "1rem", fontWeight: 500}}
             disableElevation
           >
             Войти
