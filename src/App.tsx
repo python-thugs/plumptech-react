@@ -1,10 +1,12 @@
-import React from "react";
+import {Routes, Route} from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 
 function App() {
   return (
     <div className="h-full w-full">
-      <LoginPage />
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
     </div>
   );
 }
