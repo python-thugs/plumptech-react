@@ -8,6 +8,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import createTheme from "@mui/material/styles/createTheme";
 import {BrowserRouter} from "react-router-dom";
+import {Provider} from "react-redux";
+import store from "./store";
 
 const theme = createTheme({});
 const root = ReactDOM.createRoot(
@@ -17,10 +19,12 @@ root.render(
   <React.StrictMode>
     <StyledEngineProvider injectFirst>
       <BrowserRouter>
-        <ThemeProvider theme={theme}>
-          <App />
-          <CssBaseline />
-        </ThemeProvider>
+        <Provider store={store}>
+          <ThemeProvider theme={theme}>
+            <App />
+            <CssBaseline />
+          </ThemeProvider>
+        </Provider>
       </BrowserRouter>
     </StyledEngineProvider>
   </React.StrictMode>
