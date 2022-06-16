@@ -1,14 +1,14 @@
 import {useCallback, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Text from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {ReactComponent as BG} from "./background.svg";
 import "./styles.css";
-import {login} from "../../api/auth";
-import {useAppDispatch} from "../../store";
-import {setUserAction} from "../../store/auth";
-import {useNavigate} from "react-router-dom";
+import {login} from "../../../../api/auth";
+import {useAppDispatch} from "../../../../store";
+import {setUserAction} from "../../../../store/auth";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
@@ -30,7 +30,7 @@ const LoginPage = () => {
           console.error("login error:", e);
         });
     },
-    [userName, password, dispatch]
+    [userName, password, dispatch,navigate]
   );
 
   const onUserNameChange = useCallback<

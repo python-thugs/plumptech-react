@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 import {Routes, Route} from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import AdminView from "./pages/admin";
+import LoginPage from "./views/default/pages/LoginPage";
+import AdminView from "./views/admin";
 import {useAppSelector} from "./store";
 import {PostEnum} from "./api/types";
 
