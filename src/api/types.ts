@@ -2,7 +2,12 @@ export interface IEmployee {
   id: number;
   name: string;
   username: string;
-  post: PostEnum;
+  post: IPost;
+}
+
+export interface IPost {
+  id: PostEnum;
+  name: keyof typeof PostEnum;
 }
 
 export enum PostEnum {
