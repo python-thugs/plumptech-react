@@ -1,7 +1,6 @@
 import {useMemo} from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import MuiAppBar from "@mui/material/AppBar";
-import Icon from "@mui/material/Icon";
 import T from "@mui/material/Typography";
 import TodayIcon from "@mui/icons-material/Today";
 
