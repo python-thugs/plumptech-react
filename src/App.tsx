@@ -10,7 +10,7 @@ function App() {
   const user = useAppSelector(store => store.auth);
 
   const appView = useMemo(() => {
-    switch (user.post) {
+    switch (user.post?.id) {
       case PostEnum.Администратор:
         return <AdminView />;
       default:
