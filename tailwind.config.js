@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  important: "div#root",
+  important: "body",
   corePlugins: {
     preflight: false,
   },
