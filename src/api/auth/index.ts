@@ -32,15 +32,19 @@ export async function login(data: {
 export async function signUp(
   newUser: Omit<IEmployee, "id" | "password" | "post"> & {post: number}
 ) {
-  const response = await axios.post<IEmployee | Error>(
-    `${API_ENDPOINT}/auth/signup`,
-    newUser
-  );
-  if (response.status !== 200) {
-    throw error(
-      (response.data as Error)?.message || "Could not create new user",
-      response.data
+  try {
+    const response = await axios.post<IEmployee | Error>(
+      `${API_ENDPOINT}/auth/signup`,
+      newUser
     );
+    if (response.status !== 200) {
+      throw error(
+        (response.data as Error)?.message || "Could not create new user",
+        response.data
+      );
+    }
+    return response.data as IEmployee;
+  } catch (e: any) {
+    throw e.response ? e.response.data : e.data;
   }
-  return response.data as IEmployee;
 }
