@@ -1,5 +1,5 @@
 import axios from "axios";
-import {API_ENDPOINT, error} from "..";
+import {API_ENDPOINT, error, Error} from "..";
 import {IEmployee} from "../types";
 
 /**
@@ -19,4 +19,28 @@ export async function login(data: {
     throw result.data || error("Couldn't log user in");
   }
   return result.data;
+}
+
+/**
+ * Method for creating new users
+ *
+ * @async
+ * @param newUser - data for new user
+ * @throws error if something went wrong
+ * @returns New user instance
+ */
+export async function signUp(
+  newUser: Omit<IEmployee, "id" | "password" | "post"> & {post: number}
+) {
+  const response = await axios.post<IEmployee | Error>(
+    `${API_ENDPOINT}/auth/signup`,
+    newUser
+  );
+  if (response.status !== 200) {
+    throw error(
+      (response.data as Error)?.message || "Could not create new user",
+      response.data
+    );
+  }
+  return response.data as IEmployee;
 }
