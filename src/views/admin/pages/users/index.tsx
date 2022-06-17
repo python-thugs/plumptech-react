@@ -1,12 +1,10 @@
 import T from "@mui/material/Typography";
-import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 // icons
 import TrashIcon from "@mui/icons-material/Delete";
 // custom imports
 import UserTable from "./UserTable";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {getList} from "../../../../api/users";
 import {IEmployee} from "../../../../api/types";
 
