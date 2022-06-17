@@ -9,7 +9,8 @@ import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import createTheme from "@mui/material/styles/createTheme";
 import {BrowserRouter} from "react-router-dom";
 import {Provider} from "react-redux";
-import store from "./store";
+import {PersistGate} from "redux-persist/integration/react";
+import {store, persistor} from "./store";
 
 const theme = createTheme({});
 const root = ReactDOM.createRoot(
@@ -20,10 +21,12 @@ root.render(
     <StyledEngineProvider injectFirst>
       <BrowserRouter>
         <Provider store={store}>
-          <ThemeProvider theme={theme}>
-            <App />
-            <CssBaseline />
-          </ThemeProvider>
+          <PersistGate persistor={persistor}>
+            <ThemeProvider theme={theme}>
+              <App />
+              <CssBaseline />
+            </ThemeProvider>
+          </PersistGate>
         </Provider>
       </BrowserRouter>
     </StyledEngineProvider>
