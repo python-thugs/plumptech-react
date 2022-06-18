@@ -34,3 +34,24 @@ export async function deleteUser(id: number) {
   const response = await axios.post(`${API_ENDPOINT}/users/${id}/delete`);
   return !response.data.error;
 }
+
+/**
+ * Method for updating information about user
+ *
+ * @async
+ * @param id - ID of user to update
+ * @param newData - data to update
+ */
+export async function changeUser(
+  id: number,
+  newData: Omit<IEmployee, "id" | "post"> & {post: number}
+) {
+  if (!id) {
+    throw error("ID must be set");
+  }
+  const response = await axios.post<IEmployee>(
+    `${API_ENDPOINT}/users/${id}`,
+    newData
+  );
+  return response.data;
+}
