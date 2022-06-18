@@ -90,7 +90,14 @@ const UserTable: React.FC<{
   onFeedback: FeedbackHandler;
 }> = ({users, onFeedback}) => {
   const employees = useMemo(
-    () => users?.map(user => <UserRow onFeedback={onFeedback} {...user} />),
+    () =>
+      users?.map(user => (
+        <UserRow
+          key={`user-item-${user.id}`}
+          onFeedback={onFeedback}
+          {...user}
+        />
+      )),
     [users, onFeedback]
   );
   return (
