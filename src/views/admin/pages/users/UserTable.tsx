@@ -53,7 +53,7 @@ const UserRow: React.FC<IUserRowProps> = ({
           message: err.response ? err.response.data.message : err.message,
         });
       });
-  }, [id, name]);
+  }, [id, onFeedback, name]);
 
   return (
     <TableRow
@@ -91,7 +91,7 @@ const UserTable: React.FC<{
 }> = ({users, onFeedback}) => {
   const employees = useMemo(
     () => users?.map(user => <UserRow onFeedback={onFeedback} {...user} />),
-    [users]
+    [users, onFeedback]
   );
   return (
     <Table className="table-auto">
