@@ -14,6 +14,7 @@ import UserDialog, {
   UserDialogType,
   DialogCloseHandler,
 } from "./dialogs/AddUser";
+import UserInfoDialog from "../../../../components/UserInfoDialog";
 import {getList} from "../../../../api/users";
 import {IEmployee} from "../../../../api/types";
 
@@ -37,7 +38,7 @@ const UsersPage = () => {
     [queryClient]
   );
 
-  const [showAddDialog, setShowAddDialog] = useState<UserDialogType>();
+  const [showAddDialog, setShowAddDialog] = useState<UserDialogType | "info">();
 
   const handleAddDialogClose = useCallback<DialogCloseHandler<IEmployee>>(
     newUser => {
@@ -72,6 +73,11 @@ const UsersPage = () => {
     setShowAddDialog("edit");
   }, []);
 
+  const handleUserSelect = useCallback<(u: IEmployee) => void>(user => {
+    selectUser(user);
+    setShowAddDialog("info");
+  }, []);
+
   return (
     <div className="flex flex-col py-12 gap-3">
       <div className="flex flex-row items-baseline justify-between pl-[calc(4rem+18px)] pr-5">
@@ -93,6 +99,7 @@ const UsersPage = () => {
       <UserTable
         users={users.data}
         onChange={handleEditUserClick}
+        onSelect={handleUserSelect}
         onFeedback={handleFeedbackChange}
       />
       <FAB
@@ -106,10 +113,11 @@ const UsersPage = () => {
       </FAB>
       <UserDialog
         key={`${showAddDialog}-${Date.now()}`}
-        type={showAddDialog}
+        type={showAddDialog !== "info" ? showAddDialog : undefined}
         user={selectedUser}
         onClose={handleAddDialogClose}
       />
+      <UserInfoDialog open={showAddDialog === "info"} {...selectedUser} />
       <Snackbar
         open={!!feedback}
         autoHideDuration={3000}

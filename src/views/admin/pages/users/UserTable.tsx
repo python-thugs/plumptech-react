@@ -17,12 +17,18 @@ import {FeedbackHandler} from ".";
 interface IUserRowProps extends IEmployee {
   onFeedback: FeedbackHandler;
   onChange: (user: IEmployee) => void;
+  onSelect: (user: IEmployee) => void;
 }
 
-const UserRow: React.FC<IUserRowProps> = ({onChange, onFeedback, ...user}) => {
+const UserRow: React.FC<IUserRowProps> = ({
+  onChange,
+  onFeedback,
+  onSelect,
+  ...user
+}) => {
   const handlePrintClick = useCallback(() => {
-    alert("There should be a print dialog");
-  }, [user.id]);
+    onSelect(user);
+  }, [user]);
 
   const handleDeleteClick = useCallback(() => {
     deleteUser(user.id)
@@ -88,13 +94,15 @@ const UserTable: React.FC<{
   users?: IEmployee[];
   onFeedback: FeedbackHandler;
   onChange: (user: IEmployee) => void;
-}> = ({users, onChange, onFeedback}) => {
+  onSelect: (user: IEmployee) => void;
+}> = ({users, onChange, onSelect, onFeedback}) => {
   const employees = useMemo(
     () =>
       users?.map(user => (
         <UserRow
           key={`user-item-${user.id}`}
           onChange={onChange}
+          onSelect={onSelect}
           onFeedback={onFeedback}
           {...user}
         />
