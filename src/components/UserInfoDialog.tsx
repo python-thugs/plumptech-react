@@ -1,3 +1,4 @@
+import {useReactToPrint} from "react-to-print";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -9,16 +10,40 @@ import PasswordIcon from "@mui/icons-material/Lock";
 // custom import
 import {IEmployee} from "../api/types";
 import style from "./UserInfoDialog.module.css";
+import {useCallback, useRef, useState} from "react";
 
 interface IProps extends Partial<IEmployee> {
   open: boolean;
+  onClose: () => void;
 }
 
-const UserInfoDialog: React.FC<IProps> = ({open, ...user}) => {
+const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
+  const dialogRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
+  const handlePrint = useReactToPrint({
+    content: () => dialogRef.current,
+    documentTitle: user?.name,
+    onBeforeGetContent: () => {
+      setLoading(true);
+    },
+    onAfterPrint: () => {
+      setLoading(false);
+    },
+    removeAfterPrint: true,
+  });
+
   return (
-    <Dialog open={open}>
+    <Dialog
+      ref={dialogRef}
+      open={open}
+      onClose={onClose}
+      classes={{
+        paper: "pr-6",
+      }}
+    >
       <DialogTitle className="pl-16 pt-8">Информация для входа</DialogTitle>
-      <DialogContent className="max-w-lg flex flex-col gap-6 text-justify">
+      <DialogContent className="max-w-lg flex flex-col gap-6 text-justify pb-6">
         <div className="flex flex-col pl-10 gap-6">
           <p className="m-0 text-base">
             Для входа в систему введите указанные ниже данные. В целях
@@ -40,7 +65,13 @@ const UserInfoDialog: React.FC<IProps> = ({open, ...user}) => {
         </div>
       </DialogContent>
       <DialogActions className="px-6 pb-6">
-        <Button className="w-full ml-10" color="primary" variant="contained">
+        <Button
+          className="w-full ml-10"
+          color="primary"
+          variant="contained"
+          disabled={loading}
+          onClick={handlePrint}
+        >
           Распечатать
         </Button>
       </DialogActions>
