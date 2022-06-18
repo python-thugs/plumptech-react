@@ -38,25 +38,38 @@ const UsersPage = () => {
     [queryClient]
   );
 
-  const [showAddDialog, setShowAddDialog] = useState<UserDialogType | "info">();
+  const [showDialog, setShowDialog] = useState<UserDialogType | "info">();
 
   const handleAddDialogClose = useCallback<DialogCloseHandler<IEmployee>>(
     newUser => {
-      setShowAddDialog(undefined);
+      setShowDialog(undefined);
       selectUser(undefined);
-      if (newUser) {
-        refreshUserList();
-        setFeedback({
-          type: showAddDialog === "create" ? "success" : "info",
-          action: showAddDialog === "create" ? "add-user" : "update-user",
-          message:
-            showAddDialog === "create"
-              ? `Пользователь ${newUser.name} успешно добавлен`
-              : `Информация о пользователе ${newUser.name} обновлена`,
-        });
+      if (!newUser) return;
+      refreshUserList();
+      let feedback: IFeedbackMessage | null = null;
+      switch (showDialog) {
+        case "create": {
+          feedback = {
+            type: "success",
+            action: "add-user",
+            message: `Пользователь ${newUser.name} успешно добавлен`,
+          };
+          setShowDialog("info");
+          selectUser(newUser);
+          break;
+        }
+        case "edit": {
+          feedback = {
+            type: "info",
+            action: "update-user",
+            message: `Информация о пользователе ${newUser.name} обновлена`,
+          };
+          break;
+        }
       }
+      if (feedback) setFeedback(feedback);
     },
-    [refreshUserList, showAddDialog]
+    [refreshUserList, showDialog]
   );
 
   const handleFeedbackChange = useCallback<FeedbackHandler>(
@@ -70,12 +83,12 @@ const UsersPage = () => {
   const handleSnackbarClose = useCallback(() => setFeedback(undefined), []);
   const handleEditUserClick = useCallback<(u: IEmployee) => void>(user => {
     selectUser(user);
-    setShowAddDialog("edit");
+    setShowDialog("edit");
   }, []);
 
   const handleUserSelect = useCallback<(u: IEmployee) => void>(user => {
     selectUser(user);
-    setShowAddDialog("info");
+    setShowDialog("info");
   }, []);
 
   return (
@@ -107,17 +120,23 @@ const UsersPage = () => {
         aria-label="add"
         className="fixed right-5 bottom-12"
         color="primary"
-        onClick={() => setShowAddDialog("create")}
+        onClick={() => setShowDialog("create")}
       >
         <AddIcon />
       </FAB>
       <UserDialog
-        key={`${showAddDialog}-${Date.now()}`}
-        type={showAddDialog !== "info" ? showAddDialog : undefined}
+        key={`${showDialog}-${Date.now()}`}
+        type={showDialog !== "info" ? showDialog : undefined}
         user={selectedUser}
         onClose={handleAddDialogClose}
       />
-      <UserInfoDialog open={showAddDialog === "info"} {...selectedUser} />
+      <UserInfoDialog
+        open={showDialog === "info"}
+        onClose={() => {
+          setShowDialog(undefined);
+        }}
+        {...selectedUser}
+      />
       <Snackbar
         open={!!feedback}
         autoHideDuration={3000}
