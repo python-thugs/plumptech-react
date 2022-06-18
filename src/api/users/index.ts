@@ -21,6 +21,12 @@ export async function getList(post: PostEnum | undefined = undefined) {
   return response.data;
 }
 
+/**
+ * Method for deleting users
+ *
+ * @async
+ * @param id - ID of user to delete
+ */
 export async function deleteUser(id: number) {
   if (!id) {
     throw error("ID must be set");
