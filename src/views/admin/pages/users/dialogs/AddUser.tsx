@@ -88,6 +88,7 @@ const AddUserDialog: React.FC<IProps> = ({isOpen, onClose}) => {
       <DialogContent dividers className="flex flex-col gap-6 p-6">
         <TextField
           required
+          autoComplete="name"
           label="ФИО сотрудника"
           name="name"
           error={error.includes("name") && !personName}
@@ -96,6 +97,7 @@ const AddUserDialog: React.FC<IProps> = ({isOpen, onClose}) => {
         />
         <TextField
           required
+          autoComplete="nickname"
           label="Имя пользователя"
           name="username"
           error={
