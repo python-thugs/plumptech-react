@@ -13,10 +13,10 @@ export type Error<T = any> = {
 /**
  * Helper for building error responses
  *
- * @param {string} [message] - message to display
- * @param {any} [body] - additional error information
+ * @param [message] - message to display
+ * @param [body] - additional error information
  * @returns {Error<any>}
  */
-export function error(message = "", body: any = undefined) {
+export function error(message = "", body: any = undefined): Error<any> {
   return {error: true, message, body};
 }
