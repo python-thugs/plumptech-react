@@ -22,11 +22,12 @@ const AddUserDialog: React.FC<IProps> = ({isOpen, onClose}) => {
   const [postElements, setPostElements] = useState<JSX.Element[]>([]);
   const [personName, setPersonName] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
-  const [selectedPost, setPost] = useState<number>();
+  const [selectedPost, setPost] = useState<number>(0);
   const [error, setError] = useState<string[]>([]);
 
   useEffect(() => {
     getPosts().then(posts => {
+      setPost(posts[0].id);
       setPostElements(
         posts.map(post => (
           <MenuItem key={`post-select-item-${post.id}`} value={post.id}>
