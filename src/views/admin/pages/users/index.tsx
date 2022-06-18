@@ -1,4 +1,4 @@
-import {useEffect, useCallback, useState} from "react";
+import {useCallback, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import T from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -38,12 +38,19 @@ const UsersPage = () => {
       setShowAddDialog(false);
       if (newUser) {
         queryClient.invalidateQueries("users");
+        setFeedback({
+          type: "success",
+          action: "add-user",
+          message: `Пользователь ${newUser.name} успешно добавлен`,
+        });
       }
     },
-    [users]
+    [queryClient]
   );
 
-  const handleFeedbackChange = useCallback<FeedbackHandler>(setFeedback, []);
+  const handleFeedbackChange = useCallback<FeedbackHandler>(setFeedback, [
+    setFeedback,
+  ]);
 
   const handleSnackbarClose = useCallback(() => setFeedback(undefined), []);
 
