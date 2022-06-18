@@ -20,3 +20,11 @@ export async function getList(post: PostEnum | undefined = undefined) {
   }
   return response.data;
 }
+
+export async function deleteUser(id: number) {
+  if (!id) {
+    throw error("ID must be set");
+  }
+  const response = await axios.post(`${API_ENDPOINT}/users/${id}/delete`);
+  return !response.data.error;
+}
