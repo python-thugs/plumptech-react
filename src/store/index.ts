@@ -1,6 +1,16 @@
 import {configureStore, combineReducers} from "@reduxjs/toolkit";
 import {useDispatch, useSelector, TypedUseSelectorHook} from "react-redux";
-import {persistStore, persistReducer, PersistConfig} from "redux-persist";
+import {
+  persistStore,
+  persistReducer,
+  PersistConfig,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 import storage from "redux-persist/lib/storage";
 // @ts-ignore
 import logger from "redux-logger";
@@ -25,7 +35,12 @@ export const store = configureStore({
       auth: authReducer,
     })
   ),
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(logger),
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(logger),
   devTools: process.env.NODE_ENV === "development",
 });
 export const persistor = persistStore(store);
