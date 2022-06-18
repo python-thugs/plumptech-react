@@ -86,11 +86,11 @@ const UserRow: React.FC<IUserRowProps> = ({
 };
 
 const UserTable: React.FC<{
-  users: IEmployee[];
+  users?: IEmployee[];
   onFeedback: FeedbackHandler;
 }> = ({users, onFeedback}) => {
   const employees = useMemo(
-    () => users.map(user => <UserRow onFeedback={onFeedback} {...user} />),
+    () => users?.map(user => <UserRow onFeedback={onFeedback} {...user} />),
     [users]
   );
   return (

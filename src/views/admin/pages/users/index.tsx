@@ -1,4 +1,5 @@
 import {useEffect, useCallback, useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
 import T from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import FAB from "@mui/material/Fab";
@@ -22,16 +23,10 @@ export interface IFeedbackMessage {
 export type FeedbackHandler = (message: IFeedbackMessage) => void;
 
 const UsersPage = () => {
-  const [users, setUsers] = useState<IEmployee[]>([]);
   const [feedback, setFeedback] = useState<IFeedbackMessage>();
 
-  useEffect(() => {
-    getList()
-      .then(list => setUsers(list))
-      .catch(e => {
-        console.error(e);
-      });
-  }, [setUsers]);
+  const queryClient = useQueryClient();
+  const users = useQuery("users", () => getList());
 
   const [showAddDialog, setShowAddDialog] = useState(false);
   const handleAddDialogToggle = useCallback(() => {
@@ -42,7 +37,7 @@ const UsersPage = () => {
     newUser => {
       setShowAddDialog(false);
       if (newUser) {
-        setUsers([...users, newUser]);
+        queryClient.invalidateQueries("users");
       }
     },
     [users]
@@ -70,7 +65,7 @@ const UsersPage = () => {
           Удалить выбранное
         </Button>
       </div>
-      <UserTable users={users} onFeedback={handleFeedbackChange} />
+      <UserTable users={users.data} onFeedback={handleFeedbackChange} />
       <FAB
         variant="circular"
         aria-label="add"
