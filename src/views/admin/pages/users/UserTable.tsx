@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useMemo} from "react";
 import IconButton from "@mui/material/IconButton";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
@@ -12,14 +12,10 @@ import ResetIcon from "@mui/icons-material/LockReset";
 // custom imports
 import {IEmployee, PostEnum} from "../../../../api/types";
 import {deleteUser} from "../../../../api/users";
+import {FeedbackHandler} from ".";
 
-interface IError {
-  type: "info" | "error";
-  action: string;
-  message: string;
-}
 interface IUserRowProps extends IEmployee {
-  showFeedback: (msg: IError) => void;
+  onFeedback: FeedbackHandler;
 }
 
 const UserRow: React.FC<IUserRowProps> = ({
@@ -27,7 +23,7 @@ const UserRow: React.FC<IUserRowProps> = ({
   name,
   username,
   post,
-  showFeedback,
+  onFeedback,
 }) => {
   const handlePrintClick = useCallback(() => {
     alert("There should be a print dialog");
@@ -37,21 +33,21 @@ const UserRow: React.FC<IUserRowProps> = ({
     deleteUser(id)
       .then(success => {
         if (!success) {
-          showFeedback({
+          onFeedback({
             type: "error",
             action: "delete-user",
-            message: `Возникла ошибка при удалении пользователя`,
+            message: `Возникла ошибка при удалении пользователя ${name}`,
           });
           return;
         }
-        showFeedback({
-          type: "info",
+        onFeedback({
+          type: "success",
           action: "delete-user",
           message: `Пользователь ${name} успешно удален`,
         });
       })
       .catch(err => {
-        showFeedback({
+        onFeedback({
           type: "error",
           action: "delete-user",
           message: err.response ? err.response.data.message : err.message,
@@ -89,16 +85,14 @@ const UserRow: React.FC<IUserRowProps> = ({
   );
 };
 
-const UserTable: React.FC<{users: IEmployee[]}> = ({users}) => {
+const UserTable: React.FC<{
+  users: IEmployee[];
+  onFeedback: FeedbackHandler;
+}> = ({users, onFeedback}) => {
   const employees = useMemo(
-    () => users.map(user => <UserRow {...user} />),
+    () => users.map(user => <UserRow onFeedback={onFeedback} {...user} />),
     [users]
   );
-
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const handleAddDialogToggle = useCallback(() => {
-    setShowAddDialog(!showAddDialog);
-  }, [showAddDialog]);
   return (
     <Table className="table-auto">
       <TableHead>
