@@ -10,7 +10,10 @@ import TrashIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 // custom imports
 import UserTable from "./UserTable";
-import AddUserDialog from "./dialogs/AddUser";
+import UserDialog, {
+  UserDialogType,
+  DialogCloseHandler,
+} from "./dialogs/AddUser";
 import {getList} from "../../../../api/users";
 import {IEmployee} from "../../../../api/types";
 
@@ -24,6 +27,7 @@ export type FeedbackHandler = (message: IFeedbackMessage) => void;
 
 const UsersPage = () => {
   const [feedback, setFeedback] = useState<IFeedbackMessage>();
+  const [selectedUser, selectUser] = useState<IEmployee>();
 
   const queryClient = useQueryClient();
   const users = useQuery("users", () => getList());
@@ -33,24 +37,25 @@ const UsersPage = () => {
     [queryClient]
   );
 
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const handleAddDialogToggle = useCallback(() => {
-    setShowAddDialog(!showAddDialog);
-  }, [showAddDialog]);
+  const [showAddDialog, setShowAddDialog] = useState<UserDialogType>();
 
-  const handleAddDialogClose = useCallback<(user?: IEmployee) => void>(
+  const handleAddDialogClose = useCallback<DialogCloseHandler<IEmployee>>(
     newUser => {
-      setShowAddDialog(false);
+      setShowAddDialog(undefined);
+      selectUser(undefined);
       if (newUser) {
         refreshUserList();
         setFeedback({
-          type: "success",
-          action: "add-user",
-          message: `Пользователь ${newUser.name} успешно добавлен`,
+          type: showAddDialog === "create" ? "success" : "info",
+          action: showAddDialog === "create" ? "add-user" : "update-user",
+          message:
+            showAddDialog === "create"
+              ? `Пользователь ${newUser.name} успешно добавлен`
+              : `Информация о пользователе ${newUser.name} обновлена`,
         });
       }
     },
-    [refreshUserList]
+    [refreshUserList, showAddDialog]
   );
 
   const handleFeedbackChange = useCallback<FeedbackHandler>(
@@ -62,6 +67,10 @@ const UsersPage = () => {
   );
 
   const handleSnackbarClose = useCallback(() => setFeedback(undefined), []);
+  const handleEditUserClick = useCallback<(u: IEmployee) => void>(user => {
+    selectUser(user);
+    setShowAddDialog("edit");
+  }, []);
 
   return (
     <div className="flex flex-col py-12 gap-3">
@@ -81,17 +90,26 @@ const UsersPage = () => {
           Удалить выбранное
         </Button>
       </div>
-      <UserTable users={users.data} onFeedback={handleFeedbackChange} />
+      <UserTable
+        users={users.data}
+        onChange={handleEditUserClick}
+        onFeedback={handleFeedbackChange}
+      />
       <FAB
         variant="circular"
         aria-label="add"
         className="fixed right-5 bottom-12"
         color="primary"
-        onClick={handleAddDialogToggle}
+        onClick={() => setShowAddDialog("create")}
       >
         <AddIcon />
       </FAB>
-      <AddUserDialog isOpen={showAddDialog} onClose={handleAddDialogClose} />
+      <UserDialog
+        key={`${showAddDialog}-${Date.now()}`}
+        type={showAddDialog}
+        user={selectedUser}
+        onClose={handleAddDialogClose}
+      />
       <Snackbar
         open={!!feedback}
         autoHideDuration={3000}

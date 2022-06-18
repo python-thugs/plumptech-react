@@ -16,34 +16,29 @@ import {FeedbackHandler} from ".";
 
 interface IUserRowProps extends IEmployee {
   onFeedback: FeedbackHandler;
+  onChange: (user: IEmployee) => void;
 }
 
-const UserRow: React.FC<IUserRowProps> = ({
-  id,
-  name,
-  username,
-  post,
-  onFeedback,
-}) => {
+const UserRow: React.FC<IUserRowProps> = ({onChange, onFeedback, ...user}) => {
   const handlePrintClick = useCallback(() => {
     alert("There should be a print dialog");
-  }, [id]);
+  }, [user.id]);
 
   const handleDeleteClick = useCallback(() => {
-    deleteUser(id)
+    deleteUser(user.id)
       .then(success => {
         if (!success) {
           onFeedback({
             type: "error",
             action: "delete-user",
-            message: `Возникла ошибка при удалении пользователя ${name}`,
+            message: `Возникла ошибка при удалении пользователя ${user.name}`,
           });
           return;
         }
         onFeedback({
           type: "success",
           action: "delete-user",
-          message: `Пользователь ${name} успешно удален`,
+          message: `Пользователь ${user.name} успешно удален`,
         });
       })
       .catch(err => {
@@ -53,28 +48,32 @@ const UserRow: React.FC<IUserRowProps> = ({
           message: err.response ? err.response.data.message : err.message,
         });
       });
-  }, [id, onFeedback, name]);
+  }, [user.id, onFeedback, user.name]);
+
+  const handleEditClick = useCallback(() => {
+    onChange(user);
+  }, [onChange]);
 
   return (
     <TableRow
-      checkbox={post.id !== PostEnum.Администратор}
-      name={name}
-      userName={username}
-      post={post.name}
+      checkbox={user.post.id !== PostEnum.Администратор}
+      name={user.name}
+      userName={user.username}
+      post={user.post.name}
       actions={
         <>
           <IconButton color="inherit" onClick={handlePrintClick}>
             <PrintIcon />
           </IconButton>
-          {post.id !== PostEnum.Администратор && (
-            <IconButton color="inherit">
+          {user.post.id !== PostEnum.Администратор && (
+            <IconButton color="inherit" onClick={handleEditClick}>
               <EditIcon />
             </IconButton>
           )}
           <IconButton color="inherit">
             <ResetIcon />
           </IconButton>
-          {post.id !== PostEnum.Администратор && (
+          {user.post.id !== PostEnum.Администратор && (
             <IconButton color="inherit" onClick={handleDeleteClick}>
               <DeleteIcon />
             </IconButton>
@@ -88,12 +87,14 @@ const UserRow: React.FC<IUserRowProps> = ({
 const UserTable: React.FC<{
   users?: IEmployee[];
   onFeedback: FeedbackHandler;
-}> = ({users, onFeedback}) => {
+  onChange: (user: IEmployee) => void;
+}> = ({users, onChange, onFeedback}) => {
   const employees = useMemo(
     () =>
       users?.map(user => (
         <UserRow
           key={`user-item-${user.id}`}
+          onChange={onChange}
           onFeedback={onFeedback}
           {...user}
         />

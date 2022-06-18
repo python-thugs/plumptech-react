@@ -11,23 +11,43 @@ import Select, {SelectChangeEvent} from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import {getPosts} from "../../../../../api/post";
 import {signUp} from "../../../../../api/auth";
-import {IEmployee} from "../../../../../api/types";
+import {IEmployee, PostEnum} from "../../../../../api/types";
+import {changeUser} from "../../../../../api/users";
+
+export type UserDialogType = "create" | "edit" | undefined;
+export type DialogCloseHandler<T = any> = (value?: T) => void;
 
 interface IProps {
-  isOpen: boolean;
-  onClose: (user?: IEmployee) => void;
+  type: UserDialogType;
+  user?: IEmployee;
+  onClose: DialogCloseHandler<IEmployee>;
 }
 
-const AddUserDialog: React.FC<IProps> = ({isOpen, onClose}) => {
-  const [postElements, setPostElements] = useState<JSX.Element[]>([]);
-  const [personName, setPersonName] = useState<string>("");
-  const [userName, setUserName] = useState<string>("");
-  const [selectedPost, setPost] = useState<number>(0);
+const EmptyMenuItem = <MenuItem key="menu-item-0" value={0}></MenuItem>;
+
+const UserDialog: React.FC<IProps> = ({type, user, onClose}) => {
+  console.debug("> UserDialog render %d", Date.now());
+  const [postElements, setPostElements] = useState<JSX.Element[]>([
+    EmptyMenuItem,
+  ]);
+  const [personName, setPersonName] = useState<string>(user ? user.name : "");
+  const [userName, setUserName] = useState<string>(user ? user.username : "");
+  const [selectedPost, setPost] = useState<PostEnum | null>(
+    user ? user.post.id : 0
+  );
   const [error, setError] = useState<string[]>([]);
 
   useEffect(() => {
+    if (user) {
+      setPersonName(user.name);
+      setUserName(user.username);
+      setPost(user.post.id);
+    }
+  }, [user]);
+
+  useEffect(() => {
     getPosts().then(posts => {
-      setPost(posts[0].id);
+      if (!selectedPost) setPost(posts[0].id);
       setPostElements(
         posts.map(post => (
           <MenuItem key={`post-select-item-${post.id}`} value={post.id}>
@@ -61,7 +81,7 @@ const AddUserDialog: React.FC<IProps> = ({isOpen, onClose}) => {
     [error]
   );
 
-  const handleCreateClick = useCallback(() => {
+  const handleSaveChanges = useCallback(() => {
     let newErrors = [];
     if (!personName) newErrors.push("name");
     if (!userName) newErrors.push("username");
@@ -70,21 +90,28 @@ const AddUserDialog: React.FC<IProps> = ({isOpen, onClose}) => {
       setError([...error, ...newErrors]);
       return;
     }
-    // @ts-ignore
-    signUp({name: personName, username: userName, post: selectedPost})
-      .then(newUser => {
-        onClose(newUser);
+    if (type === "create") {
+      signUp({name: personName, username: userName, post: selectedPost!})
+        .then(newUser => onClose(newUser))
+        .catch(() => setError([...error, "exists"]));
+    } else if (type === "edit" && user) {
+      changeUser(user.id, {
+        name: personName,
+        username: userName,
+        post: selectedPost!,
       })
-      .catch(() => {
-        setError([...error, "exists"]);
-      });
+        .then(newUser => onClose(newUser))
+        .catch(() => setError([...error, "exists"]));
+    }
   }, [onClose, personName, userName, selectedPost, error]);
 
-  const handleDialogClose = useCallback(() => onClose(), [onClose]);
+  const handleCancelChanges = useCallback(() => onClose(), [onClose]);
 
   return (
-    <Dialog open={isOpen} onClose={handleDialogClose}>
-      <DialogTitle>Добавление пользователя</DialogTitle>
+    <Dialog open={!!type} onClose={handleCancelChanges}>
+      <DialogTitle>
+        {type === "create" ? "Добавление" : "Редактирование"} пользователя
+      </DialogTitle>
       <DialogContent dividers className="flex flex-col gap-6 p-6">
         <TextField
           required
@@ -131,7 +158,7 @@ const AddUserDialog: React.FC<IProps> = ({isOpen, onClose}) => {
         <Button
           color="inherit"
           className="text-gray-500 hover:text-rose-600 hover:bg-rose-50 px-4"
-          onClick={handleDialogClose}
+          onClick={handleCancelChanges}
         >
           Отмена
         </Button>
@@ -139,13 +166,13 @@ const AddUserDialog: React.FC<IProps> = ({isOpen, onClose}) => {
           color="primary"
           variant="contained"
           disableElevation
-          onClick={handleCreateClick}
+          onClick={handleSaveChanges}
         >
-          Добавить
+          {type === "create" ? "Добавить" : "Сохранить"}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AddUserDialog;
+export default UserDialog;
