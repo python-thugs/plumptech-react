@@ -28,6 +28,11 @@ const UsersPage = () => {
   const queryClient = useQueryClient();
   const users = useQuery("users", () => getList());
 
+  const refreshUserList = useCallback(
+    () => queryClient.invalidateQueries("users"),
+    [queryClient]
+  );
+
   const [showAddDialog, setShowAddDialog] = useState(false);
   const handleAddDialogToggle = useCallback(() => {
     setShowAddDialog(!showAddDialog);
@@ -37,7 +42,7 @@ const UsersPage = () => {
     newUser => {
       setShowAddDialog(false);
       if (newUser) {
-        queryClient.invalidateQueries("users");
+        refreshUserList();
         setFeedback({
           type: "success",
           action: "add-user",
@@ -45,12 +50,16 @@ const UsersPage = () => {
         });
       }
     },
-    [queryClient]
+    [refreshUserList]
   );
 
-  const handleFeedbackChange = useCallback<FeedbackHandler>(setFeedback, [
-    setFeedback,
-  ]);
+  const handleFeedbackChange = useCallback<FeedbackHandler>(
+    message => {
+      setFeedback(message);
+      refreshUserList();
+    },
+    [setFeedback, refreshUserList]
+  );
 
   const handleSnackbarClose = useCallback(() => setFeedback(undefined), []);
 
