@@ -1,6 +1,6 @@
 import axios from "axios";
 import {API_ENDPOINT, error, Error} from "..";
-import {IEmployee} from "../types";
+import {IEmployee, WithPassword} from "../types";
 
 /**
  * Method for authenticating user
@@ -33,17 +33,17 @@ export async function signUp(
   newUser: Omit<IEmployee, "id" | "password" | "post"> & {post: number}
 ) {
   try {
-    const response = await axios.post<IEmployee | Error>(
+    const response = await axios.post<WithPassword<IEmployee>>(
       `${API_ENDPOINT}/auth/signup`,
       newUser
     );
     if (response.status !== 200) {
       throw error(
-        (response.data as Error)?.message || "Could not create new user",
+        (response.data as any)?.message || "Could not create new user",
         response.data
       );
     }
-    return response.data as IEmployee;
+    return response.data;
   } catch (e: any) {
     throw e.response ? e.response.data : e.data;
   }

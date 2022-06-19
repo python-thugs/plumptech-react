@@ -11,7 +11,7 @@ import Select, {SelectChangeEvent} from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import {getPosts} from "../../../../../api/post";
 import {signUp} from "../../../../../api/auth";
-import {IEmployee, PostEnum} from "../../../../../api/types";
+import {IEmployee, PostEnum, WithPassword} from "../../../../../api/types";
 import {changeUser} from "../../../../../api/users";
 
 export type UserDialogType = "create" | "edit" | undefined;

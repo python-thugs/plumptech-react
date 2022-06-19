@@ -15,3 +15,5 @@ export enum PostEnum {
   "Старший техник" = 2,
   "Автослесарь" = 3,
 }
+
+export type WithPassword<T> = T & {password: string};
