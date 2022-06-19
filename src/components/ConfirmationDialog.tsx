@@ -6,12 +6,18 @@ import DialogContent from "@mui/material/DialogContent";
 import {useCallback} from "react";
 
 interface IProps {
-  classes: React.ComponentProps<typeof Dialog>["classes"];
+  classes?: React.ComponentProps<typeof Dialog>["classes"];
   open: boolean;
   text: string;
-  cancelText?: string;
-  confirmText?: string;
   onClose: (confirmed: boolean) => void;
+  cancelText?: string;
+  cancelClass?: string;
+  cancelType?: React.ComponentProps<typeof Button>["color"];
+  cancelVariant?: React.ComponentProps<typeof Button>["variant"];
+  confirmText?: string;
+  confirmClass?: string;
+  confirmType?: React.ComponentProps<typeof Button>["color"];
+  confirmVariant?: React.ComponentProps<typeof Button>["variant"];
 }
 
 const ConfirmationDialog: React.FC<IProps> = ({
@@ -19,7 +25,13 @@ const ConfirmationDialog: React.FC<IProps> = ({
   open,
   text,
   cancelText = "Отмена",
+  cancelClass = "",
+  cancelType = "error",
+  cancelVariant = "text",
   confirmText = "Подтвердить",
+  confirmClass = "",
+  confirmType = "primary",
+  confirmVariant = "contained",
   onClose,
 }) => {
   const cancelClick = useCallback(() => onClose(false), [onClose]);
@@ -32,13 +44,18 @@ const ConfirmationDialog: React.FC<IProps> = ({
         <p className="m-0 text-justify">{text}</p>
       </DialogContent>
       <DialogActions className="gap-4 px-5">
-        <Button color="error" variant="contained" onClick={cancelClick}>
+        <Button
+          className={cancelClass}
+          color={cancelType}
+          variant={cancelVariant}
+          onClick={cancelClick}
+        >
           {cancelText}
         </Button>
         <Button
-          color="inherit"
-          className="text-gray-500 hover:text-blue-600"
-          variant="text"
+          className={confirmClass}
+          color={confirmType}
+          variant={confirmVariant}
           onClick={confirmClick}
         >
           {confirmText}

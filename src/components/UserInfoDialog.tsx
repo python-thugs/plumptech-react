@@ -97,6 +97,10 @@ const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
         text="Прежде чем закрыть окно убедитесь, что сохранили информацию для входа
           пользователя. Впоследствии ее невозможно будет просмотреть."
         confirmText="Закрыть"
+        confirmType="inherit"
+        confirmVariant="text"
+        confirmClass="text-gray-500 hover:text-blue-600"
+        cancelVariant="contained"
       />
     </>
   );
