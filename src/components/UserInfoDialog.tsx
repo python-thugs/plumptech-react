@@ -20,6 +20,7 @@ interface IProps extends Partial<IEmployee> {
 const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
   const dialogRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [confirmClose, setConfirmClose] = useState(false);
 
   const handlePrint = useReactToPrint({
     content: () => dialogRef.current,
@@ -33,49 +34,86 @@ const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
     removeAfterPrint: true,
   });
 
+  const toggleCloseConfirmation = useCallback(() => {
+    setConfirmClose(!confirmClose);
+  }, [confirmClose]);
+
+  const handleClose = useCallback(() => {
+    setConfirmClose(false);
+    onClose();
+  }, []);
+
   return (
-    <Dialog
-      ref={dialogRef}
-      open={open}
-      onClose={onClose}
-      classes={{
-        paper: "pr-6",
-      }}
-    >
-      <DialogTitle className="pl-16 pt-8">Информация для входа</DialogTitle>
-      <DialogContent className="max-w-lg flex flex-col gap-6 text-justify pb-6">
-        <div className="flex flex-col pl-10 gap-6">
-          <p className="m-0 text-base">
-            Для входа в систему введите указанные ниже данные. В целях
-            безопасности, после первого входа в систему необходимо сменить
-            временный пароль, сгенерированный системой.
+    <>
+      <Dialog
+        ref={dialogRef}
+        open={open}
+        onClose={toggleCloseConfirmation}
+        classes={{
+          paper: "pr-6",
+        }}
+      >
+        <DialogTitle className="pl-16 pt-8">Информация для входа</DialogTitle>
+        <DialogContent className="max-w-lg flex flex-col gap-6 text-justify pb-6">
+          <div className="flex flex-col pl-10 gap-6">
+            <p className="m-0 text-base">
+              Для входа в систему введите указанные ниже данные. В целях
+              безопасности, после первого входа в систему необходимо сменить
+              временный пароль, сгенерированный системой.
+            </p>
+            <p className="m-0 flex flex-col gap-2">
+              <span className="font-medium">{user.name}</span>
+              <span className="text-xs">{user?.post?.name}</span>
+            </p>
+          </div>
+          <div className={style["user-info"]}>
+            <UserIcon className="text-gray-400" />
+            <span className="font-medium">Имя пользователя:</span>
+            <span>{user.username}</span>
+            <PasswordIcon className="text-gray-400" />
+            <span className="font-medium">Пароль:</span>
+            <span>{(user as any).password}</span>
+          </div>
+        </DialogContent>
+        <DialogActions className="px-6 pb-6">
+          <Button
+            className="w-full ml-10"
+            color="primary"
+            variant="contained"
+            disabled={loading}
+            onClick={handlePrint}
+          >
+            Распечатать
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={confirmClose} onClose={toggleCloseConfirmation}>
+        <DialogTitle>Подтверждение</DialogTitle>
+        <DialogContent>
+          <p className="m-0 text-justify">
+            Прежде чем закрыть окно убедитесь, что сохранили информацию для
+            входа пользователя. Впоследствии ее невозможно будет просмотреть.
           </p>
-          <p className="m-0 flex flex-col gap-2">
-            <span className="font-medium">{user.name}</span>
-            <span className="text-xs">{user?.post?.name}</span>
-          </p>
-        </div>
-        <div className={style["user-info"]}>
-          <UserIcon className="text-gray-400" />
-          <span className="font-medium">Имя пользователя:</span>
-          <span>{user.username}</span>
-          <PasswordIcon className="text-gray-400" />
-          <span className="font-medium">Пароль:</span>
-          <span>{(user as any).password}</span>
-        </div>
-      </DialogContent>
-      <DialogActions className="px-6 pb-6">
-        <Button
-          className="w-full ml-10"
-          color="primary"
-          variant="contained"
-          disabled={loading}
-          onClick={handlePrint}
-        >
-          Распечатать
-        </Button>
-      </DialogActions>
-    </Dialog>
+        </DialogContent>
+        <DialogActions className="gap-4 px-5">
+          <Button
+            color="error"
+            variant="contained"
+            onClick={toggleCloseConfirmation}
+          >
+            Отмена
+          </Button>
+          <Button
+            color="inherit"
+            className="text-gray-500 hover:text-blue-600"
+            variant="text"
+            onClick={handleClose}
+          >
+            Закрыть
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
