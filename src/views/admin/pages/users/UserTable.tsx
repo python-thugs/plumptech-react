@@ -7,7 +7,6 @@ import TableRow from "./TableRow";
 // icons
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PrintIcon from "@mui/icons-material/Print";
 import ResetIcon from "@mui/icons-material/LockReset";
 // custom imports
 import {IEmployee, PostEnum} from "../../../../api/types";
@@ -26,10 +25,6 @@ const UserRow: React.FC<IUserRowProps> = ({
   onSelect,
   ...user
 }) => {
-  const handlePrintClick = useCallback(() => {
-    onSelect(user);
-  }, [user]);
-
   const handleDeleteClick = useCallback(() => {
     deleteUser(user.id)
       .then(success => {
@@ -68,9 +63,6 @@ const UserRow: React.FC<IUserRowProps> = ({
       post={user.post.name}
       actions={
         <>
-          <IconButton color="inherit" onClick={handlePrintClick}>
-            <PrintIcon />
-          </IconButton>
           {user.post.id !== PostEnum.Администратор && (
             <IconButton color="inherit" onClick={handleEditClick}>
               <EditIcon />
