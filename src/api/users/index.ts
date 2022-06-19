@@ -1,5 +1,5 @@
 import axios from "axios";
-import {IEmployee, PostEnum} from "../types";
+import {IEmployee, PostEnum, WithPassword} from "../types";
 import {error, API_ENDPOINT} from "..";
 
 /**
@@ -44,7 +44,9 @@ export async function deleteUser(id: number) {
  */
 export async function changeUser(
   id: number,
-  newData: Omit<IEmployee, "id" | "post"> & {post: number}
+  newData: Partial<
+    WithPassword<Omit<IEmployee, "id" | "post"> & {post: number}>
+  >
 ) {
   if (!id) {
     throw error("ID must be set");
