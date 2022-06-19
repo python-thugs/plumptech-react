@@ -13,8 +13,10 @@ import UserTable from "./UserTable";
 import UserDialog, {
   UserDialogType,
   DialogCloseHandler,
+  isUserDialogType,
 } from "./dialogs/UserDialog";
 import UserInfoDialog from "../../../../components/UserInfoDialog";
+import PasswordResetDialog from "../../../../components/PasswordResetDialog";
 import {getList} from "../../../../api/users";
 import {IEmployee} from "../../../../api/types";
 
@@ -25,10 +27,12 @@ export interface IFeedbackMessage {
 }
 
 export type FeedbackHandler = (message: IFeedbackMessage) => void;
+type DialogTypes = UserDialogType | "info" | "reset-password";
 
 const UsersPage = () => {
   const [feedback, setFeedback] = useState<IFeedbackMessage>();
   const [selectedUser, selectUser] = useState<IEmployee>();
+  const [showDialog, setShowDialog] = useState<DialogTypes>();
 
   const queryClient = useQueryClient();
   const users = useQuery("users", () => getList());
@@ -38,9 +42,7 @@ const UsersPage = () => {
     [queryClient]
   );
 
-  const [showDialog, setShowDialog] = useState<UserDialogType | "info">();
-
-  const handleDialogClose = useCallback<DialogCloseHandler<IEmployee>>(
+  const handleUserDialogClose = useCallback<DialogCloseHandler<IEmployee>>(
     newUser => {
       setShowDialog(undefined);
       selectUser(undefined);
@@ -81,6 +83,7 @@ const UsersPage = () => {
   );
 
   const handleSnackbarClose = useCallback(() => setFeedback(undefined), []);
+
   const handleEditUserClick = useCallback<(u: IEmployee) => void>(user => {
     selectUser(user);
     setShowDialog("edit");
@@ -89,6 +92,32 @@ const UsersPage = () => {
   const handleUserSelect = useCallback<(u: IEmployee) => void>(user => {
     selectUser(user);
     setShowDialog("info");
+  }, []);
+
+  const handlePasswordResetClose = useCallback<
+    React.ComponentProps<typeof PasswordResetDialog>["onClose"]
+  >(
+    updatedUser => {
+      debugger;
+      if (!updatedUser) {
+        setShowDialog(undefined);
+        return;
+      }
+      refreshUserList();
+      setFeedback({
+        type: "success",
+        action: "reset-password",
+        message: `Пароль пользователя ${updatedUser.name} успешно изменен`,
+      });
+      selectUser(updatedUser);
+      setShowDialog("info");
+    },
+    [refreshUserList]
+  );
+
+  const handleResetPasswordClick = useCallback<(u: IEmployee) => void>(user => {
+    setShowDialog("reset-password");
+    selectUser(user);
   }, []);
 
   return (
@@ -114,6 +143,7 @@ const UsersPage = () => {
         onChange={handleEditUserClick}
         onSelect={handleUserSelect}
         onFeedback={handleFeedbackChange}
+        onPasswordReset={handleResetPasswordClick}
       />
       <FAB
         variant="circular"
@@ -126,9 +156,9 @@ const UsersPage = () => {
       </FAB>
       <UserDialog
         key={`${showDialog}-${Date.now()}`}
-        type={showDialog !== "info" ? showDialog : undefined}
+        type={isUserDialogType(showDialog) ? showDialog : undefined}
         user={selectedUser}
-        onClose={handleDialogClose}
+        onClose={handleUserDialogClose}
       />
       <UserInfoDialog
         open={showDialog === "info"}
@@ -137,6 +167,13 @@ const UsersPage = () => {
         }}
         {...selectedUser}
       />
+      {selectedUser && showDialog === "reset-password" && (
+        <PasswordResetDialog
+          id={selectedUser.id}
+          open={showDialog === "reset-password"}
+          onClose={handlePasswordResetClose}
+        />
+      )}
       <Snackbar
         open={!!feedback}
         autoHideDuration={3000}

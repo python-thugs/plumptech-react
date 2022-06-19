@@ -11,11 +11,20 @@ import Select, {SelectChangeEvent} from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import {getPosts} from "../../../../../api/post";
 import {signUp} from "../../../../../api/auth";
-import {IEmployee, PostEnum, WithPassword} from "../../../../../api/types";
+import {IEmployee, PostEnum} from "../../../../../api/types";
 import {changeUser} from "../../../../../api/users";
 
-export type UserDialogType = "create" | "edit" | undefined;
 export type DialogCloseHandler<T = any> = (value?: T) => void;
+const UserDialogTypes = ["create", "edit", undefined] as const;
+export type UserDialogType = typeof UserDialogTypes[number];
+/**
+ * Method for checking that `v` is of type `UserDialogType`
+ *
+ * @param {any} v - value to check
+ */
+export function isUserDialogType(v: any): v is UserDialogType {
+  return UserDialogTypes.includes(v);
+}
 
 interface IProps {
   type: UserDialogType;

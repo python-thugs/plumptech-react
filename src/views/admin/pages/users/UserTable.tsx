@@ -17,12 +17,14 @@ interface IUserRowProps extends IEmployee {
   onFeedback: FeedbackHandler;
   onChange: (user: IEmployee) => void;
   onSelect: (user: IEmployee) => void;
+  onPasswordReset: (user: IEmployee) => void;
 }
 
 const UserRow: React.FC<IUserRowProps> = ({
   onChange,
   onFeedback,
   onSelect,
+  onPasswordReset,
   ...user
 }) => {
   const handleDeleteClick = useCallback(() => {
@@ -55,6 +57,10 @@ const UserRow: React.FC<IUserRowProps> = ({
     onChange(user);
   }, [onChange]);
 
+  const handleResetClick = useCallback(() => {
+    onPasswordReset(user);
+  }, [user, onPasswordReset]);
+
   return (
     <TableRow
       checkbox={user.post.id !== PostEnum.Администратор}
@@ -68,7 +74,7 @@ const UserRow: React.FC<IUserRowProps> = ({
               <EditIcon />
             </IconButton>
           )}
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={handleResetClick}>
             <ResetIcon />
           </IconButton>
           {user.post.id !== PostEnum.Администратор && (
@@ -82,24 +88,17 @@ const UserRow: React.FC<IUserRowProps> = ({
   );
 };
 
-const UserTable: React.FC<{
-  users?: IEmployee[];
-  onFeedback: FeedbackHandler;
-  onChange: (user: IEmployee) => void;
-  onSelect: (user: IEmployee) => void;
-}> = ({users, onChange, onSelect, onFeedback}) => {
+const UserTable: React.FC<
+  {
+    users?: IEmployee[];
+  } & Omit<IUserRowProps, keyof IEmployee>
+> = ({users, ...userRowProps}) => {
   const employees = useMemo(
     () =>
       users?.map(user => (
-        <UserRow
-          key={`user-item-${user.id}`}
-          onChange={onChange}
-          onSelect={onSelect}
-          onFeedback={onFeedback}
-          {...user}
-        />
+        <UserRow key={`user-item-${user.id}`} {...user} {...userRowProps} />
       )),
-    [users, onFeedback]
+    [users, userRowProps]
   );
   return (
     <Table className="table-auto">
