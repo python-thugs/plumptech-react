@@ -40,7 +40,7 @@ const UsersPage = () => {
 
   const [showDialog, setShowDialog] = useState<UserDialogType | "info">();
 
-  const handleAddDialogClose = useCallback<DialogCloseHandler<IEmployee>>(
+  const handleDialogClose = useCallback<DialogCloseHandler<IEmployee>>(
     newUser => {
       setShowDialog(undefined);
       selectUser(undefined);
@@ -128,7 +128,7 @@ const UsersPage = () => {
         key={`${showDialog}-${Date.now()}`}
         type={showDialog !== "info" ? showDialog : undefined}
         user={selectedUser}
-        onClose={handleAddDialogClose}
+        onClose={handleDialogClose}
       />
       <UserInfoDialog
         open={showDialog === "info"}
