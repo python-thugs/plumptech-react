@@ -7,6 +7,7 @@ import AdminView from "./views/admin";
 import {useAppSelector} from "./store";
 import {PostEnum} from "./api/types";
 import AppBar from "./components/AppBar";
+import Sidebar from "./components/SideBar";
 
 const queryClient = new QueryClient();
 
@@ -34,10 +35,14 @@ function App() {
         <Route
           path="*"
           element={
-            <>
-              <AppBar />
-              {appView}
-            </>
+            <div className="flex flex-row flex-1 flex-shrink-0 h-full w-full">
+              <Sidebar />
+
+              <div className="flex flex-col flex-1 h-full">
+                <AppBar />
+                {appView}
+              </div>
+            </div>
           }
         />
       </Routes>

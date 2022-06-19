@@ -9,7 +9,7 @@ const AppBar = () => {
   const trigger = useScrollTrigger({disableHysteresis: true, threshold: 0});
   return (
     <MuiAppBar
-      className="px-5 pb-2 pt-4"
+      className="px-5 pb-3 pt-5"
       position="sticky"
       elevation={trigger ? 4 : 0}
     >
