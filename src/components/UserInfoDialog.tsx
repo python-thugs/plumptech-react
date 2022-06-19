@@ -8,6 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 import UserIcon from "@mui/icons-material/Person";
 import PasswordIcon from "@mui/icons-material/Lock";
 // custom import
+import ConfirmationDialog from "./ConfirmationDialog";
 import {IEmployee} from "../api/types";
 import style from "./UserInfoDialog.module.css";
 import {useCallback, useRef, useState} from "react";
@@ -34,13 +35,13 @@ const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
     removeAfterPrint: true,
   });
 
-  const toggleCloseConfirmation = useCallback(() => {
-    setConfirmClose(!confirmClose);
-  }, [confirmClose]);
+  const displayConfirmation = useCallback(() => setConfirmClose(true), []);
 
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback<
+    React.ComponentProps<typeof ConfirmationDialog>["onClose"]
+  >(confirm => {
     setConfirmClose(false);
-    onClose();
+    if (confirm) onClose();
   }, []);
 
   return (
@@ -48,7 +49,7 @@ const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
       <Dialog
         ref={dialogRef}
         open={open}
-        onClose={toggleCloseConfirmation}
+        onClose={displayConfirmation}
         classes={{
           paper: "pr-6",
         }}
@@ -87,32 +88,16 @@ const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={confirmClose} onClose={toggleCloseConfirmation}>
-        <DialogTitle>Подтверждение</DialogTitle>
-        <DialogContent>
-          <p className="m-0 text-justify">
-            Прежде чем закрыть окно убедитесь, что сохранили информацию для
-            входа пользователя. Впоследствии ее невозможно будет просмотреть.
-          </p>
-        </DialogContent>
-        <DialogActions className="gap-4 px-5">
-          <Button
-            color="error"
-            variant="contained"
-            onClick={toggleCloseConfirmation}
-          >
-            Отмена
-          </Button>
-          <Button
-            color="inherit"
-            className="text-gray-500 hover:text-blue-600"
-            variant="text"
-            onClick={handleClose}
-          >
-            Закрыть
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmationDialog
+        classes={{
+          paper: "max-w-md",
+        }}
+        open={confirmClose}
+        onClose={handleClose}
+        text="Прежде чем закрыть окно убедитесь, что сохранили информацию для входа
+          пользователя. Впоследствии ее невозможно будет просмотреть."
+        confirmText="Закрыть"
+      />
     </>
   );
 };
