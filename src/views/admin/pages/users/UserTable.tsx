@@ -67,7 +67,7 @@ const UserRow: React.FC<IUserRowProps> = ({
 
   const handleEditClick = useCallback(() => {
     onChange(user);
-  }, [onChange]);
+  }, [onChange, user]);
 
   const handleResetClick = useCallback(() => {
     onPasswordReset(user);

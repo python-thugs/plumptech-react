@@ -39,10 +39,13 @@ const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
 
   const handleClose = useCallback<
     React.ComponentProps<typeof ConfirmationDialog>["onClose"]
-  >(confirm => {
-    setConfirmClose(false);
-    if (confirm) onClose();
-  }, []);
+  >(
+    confirm => {
+      setConfirmClose(false);
+      if (confirm) onClose();
+    },
+    [onClose]
+  );
 
   return (
     <>

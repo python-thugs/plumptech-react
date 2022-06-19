@@ -1,5 +1,5 @@
 import axios from "axios";
-import {API_ENDPOINT, error, Error} from "..";
+import {API_ENDPOINT, error} from "..";
 import {IEmployee, WithPassword} from "../types";
 
 /**

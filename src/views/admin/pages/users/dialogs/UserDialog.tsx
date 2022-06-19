@@ -65,7 +65,7 @@ const UserDialog: React.FC<IProps> = ({type, user, onClose}) => {
         ))
       );
     });
-  }, []);
+  }, [selectedPost]);
 
   const handlePostSelect = useCallback(
     (e: SelectChangeEvent<number | null>) => {
@@ -112,7 +112,7 @@ const UserDialog: React.FC<IProps> = ({type, user, onClose}) => {
         .then(newUser => onClose(newUser))
         .catch(() => setError([...error, "exists"]));
     }
-  }, [onClose, personName, userName, selectedPost, error]);
+  }, [onClose, personName, userName, selectedPost, error, type, user]);
 
   const handleCancelChanges = useCallback(() => onClose(), [onClose]);
 
