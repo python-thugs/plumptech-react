@@ -35,6 +35,10 @@ const PasswordResetDialog: React.FC<IProps> = ({id, open, onClose}) => {
   >(
     ({target}) => {
       setInputs({...inputs, [target.name]: target.value});
+      if (target.name === "confirm") {
+        if (inputs.password !== target.value) setError(true);
+        else setError(false);
+      }
     },
     [inputs]
   );
@@ -61,10 +65,12 @@ const PasswordResetDialog: React.FC<IProps> = ({id, open, onClose}) => {
       <DialogTitle>Сброс пароля</DialogTitle>
       <DialogContent className="flex flex-col gap-8">
         <TextField
+          error={error && !inputs.password}
           type="password"
           name="password"
           label="Новый пароль"
           onChange={handleInputChange}
+          value={inputs.password}
           InputProps={{
             endAdornment: (
               <InputAdornment
@@ -77,10 +83,17 @@ const PasswordResetDialog: React.FC<IProps> = ({id, open, onClose}) => {
           }}
         />
         <TextField
+          error={
+            error && (!inputs.password || inputs.password !== inputs.confirm)
+          }
           type="password"
           name="confirm"
           label="Подтверждение пароля"
+          helperText={
+            inputs.password !== inputs.confirm && "Пароли должны совпадать!"
+          }
           onChange={handleInputChange}
+          value={inputs.confirm}
           InputProps={{
             endAdornment: (
               <InputAdornment
