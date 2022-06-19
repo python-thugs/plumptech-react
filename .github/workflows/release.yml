@@ -2,12 +2,11 @@ name: release-app
 
 on:
   push:
-    branches:
-      - dev/action
+    tags:
+      - '*'
 
 jobs:
   release-app:
-    if: startsWith(github.ref, 'refs/tags/')
     name: Job for building and releasing Plumptech React application
     runs-on: ubuntu-latest
     steps:
@@ -31,5 +30,6 @@ jobs:
           && tar -zcvf plumptech.tar.xz ${{ github.workflow }}/build
       - name: Release production-ready application
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: plumptech.tar.xz
