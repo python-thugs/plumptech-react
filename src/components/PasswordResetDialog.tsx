@@ -3,6 +3,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import FormGroup from "@mui/material/FormGroup";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 // icons
@@ -62,51 +63,55 @@ const PasswordResetDialog: React.FC<IProps> = ({id, open, onClose}) => {
 
   return (
     <Dialog open={open} onClose={closeWithoutChanges}>
-      <DialogTitle>Сброс пароля</DialogTitle>
-      <DialogContent className="flex flex-col gap-8">
-        <TextField
-          error={error && !inputs.password}
-          type="password"
-          name="password"
-          label="Новый пароль"
-          onChange={handleInputChange}
-          value={inputs.password}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment
-                position="end"
-                onClick={createShowChangeHandler("password")}
-              >
-                {show.password ? <HideIcon /> : <ShowIcon />}
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          error={
-            error && (!inputs.password || inputs.password !== inputs.confirm)
-          }
-          type="password"
-          name="confirm"
-          label="Подтверждение пароля"
-          helperText={
-            inputs.password !== inputs.confirm && "Пароли должны совпадать!"
-          }
-          onChange={handleInputChange}
-          value={inputs.confirm}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment
-                position="end"
-                onClick={createShowChangeHandler("confirm")}
-              >
-                {show.confirm ? <HideIcon /> : <ShowIcon />}
-              </InputAdornment>
-            ),
-          }}
-        />
+      <DialogTitle className="pt-5 pb-2">Сброс пароля</DialogTitle>
+      <DialogContent className="!pt-3 min-w-[400px]">
+        <form action="" className="flex flex-col gap-6">
+          <TextField
+            error={error && !inputs.password}
+            type={show.password ? "text" : "password"}
+            autoComplete="new-password"
+            name="password"
+            label="Новый пароль"
+            onChange={handleInputChange}
+            value={inputs.password}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment
+                  position="end"
+                  onClick={createShowChangeHandler("password")}
+                >
+                  {show.password ? <HideIcon /> : <ShowIcon />}
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            error={
+              error && (!inputs.password || inputs.password !== inputs.confirm)
+            }
+            type={show.confirm ? "text" : "password"}
+            autoComplete="new-password"
+            name="confirm"
+            label="Подтверждение пароля"
+            helperText={
+              inputs.password !== inputs.confirm && "Пароли должны совпадать!"
+            }
+            onChange={handleInputChange}
+            value={inputs.confirm}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment
+                  position="end"
+                  onClick={createShowChangeHandler("confirm")}
+                >
+                  {show.confirm ? <HideIcon /> : <ShowIcon />}
+                </InputAdornment>
+              ),
+            }}
+          />
+        </form>
       </DialogContent>
-      <DialogActions>
+      <DialogActions className="px-6 pb-5">
         <Button
           variant="contained"
           className="w-full"
