@@ -154,19 +154,23 @@ const UsersPage = () => {
       >
         <AddIcon />
       </FAB>
-      <UserDialog
-        key={`${showDialog}-${Date.now()}`}
-        type={isUserDialogType(showDialog) ? showDialog : undefined}
-        user={selectedUser}
-        onClose={handleUserDialogClose}
-      />
-      <UserInfoDialog
-        open={showDialog === "info"}
-        onClose={() => {
-          setShowDialog(undefined);
-        }}
-        {...selectedUser}
-      />
+      {isUserDialogType(showDialog) && (
+        <UserDialog
+          key={`${showDialog}-${Date.now()}`}
+          type={isUserDialogType(showDialog) ? showDialog : undefined}
+          user={selectedUser}
+          onClose={handleUserDialogClose}
+        />
+      )}
+      {showDialog === "info" && (
+        <UserInfoDialog
+          open={showDialog === "info"}
+          onClose={() => {
+            setShowDialog(undefined);
+          }}
+          {...selectedUser}
+        />
+      )}
       {selectedUser && showDialog === "reset-password" && (
         <PasswordResetDialog
           id={selectedUser.id}
