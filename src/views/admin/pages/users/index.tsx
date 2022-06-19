@@ -13,7 +13,7 @@ import UserTable from "./UserTable";
 import UserDialog, {
   UserDialogType,
   DialogCloseHandler,
-} from "./dialogs/AddUser";
+} from "./dialogs/UserDialog";
 import UserInfoDialog from "../../../../components/UserInfoDialog";
 import {getList} from "../../../../api/users";
 import {IEmployee} from "../../../../api/types";
