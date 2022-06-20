@@ -1,8 +1,14 @@
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Adapter from "@date-io/date-fns";
 import {ru} from "date-fns/locale";
+import DayView from "./DayView";
 
-let adapter = new Adapter({locale: ru});
+export const adapter = new Adapter({locale: ru});
+
+export type Day = {
+  value: Date;
+  current: boolean;
+};
 
 /**
  * Function that returns normalized array of days for current month
@@ -10,47 +16,54 @@ let adapter = new Adapter({locale: ru});
  * @param {Date} date - date that will be used for getting month
  * @returns array of days
  */
-function getDaysInMonth(date: Date) {
+function getDaysInMonth(date: Date): Day[] {
   let firstDay = adapter.startOfMonth(date);
   let lastDay = adapter.endOfMonth(date);
-  let days = [firstDay];
+  let days: Day[] = [{value: firstDay, current: true}];
   let d = firstDay;
   while (!adapter.isSameDay(d, lastDay)) {
     d = adapter.addDays(d, 1);
-    days.push(d);
+    days.push({value: d, current: true});
   }
 
   const weekDayFiller = [0, 1, 2, 3, 4, 5, 6];
   const startFill = weekDayFiller
-    .slice(0, days[0].getDay())
-    .map(i => adapter.addDays(firstDay, -(i + 1)))
+    .slice(0, days[0].value.getDay())
+    .map(i => ({value: adapter.addDays(firstDay, -(i + 1)), current: false}))
     .reverse();
   const endFill = weekDayFiller
-    .slice(days[days.length - 1].getDay() + 1)
-    .map((_, i) => adapter.addDays(lastDay, i + 1));
+    .slice(days[days.length - 1].value.getDay() + 1)
+    .map((_, i) => ({value: adapter.addDays(lastDay, i + 1), current: false}));
 
   return [...startFill, ...days, ...endFill];
 }
 
-const MonthView = () => {
-  const month = useMemo(() => getDaysInMonth(new Date()), []);
+interface IProps {
+  month: Date;
+}
+
+const MonthView: React.FC<IProps> = ({month}) => {
+  const [daysOfMonth, setDaysOfMonth] = useState(getDaysInMonth(month));
   const dayElements = useMemo(() => {
     let result = [];
-    for (let i = 0; i < month.length; i += 7) {
+    for (let i = 0; i < daysOfMonth.length; i += 7) {
       result.push(
-        month.slice(i, i + 7).map(day => (
-          <span key={day.getTime()} className="w-8 h-8">
-            {day.getDate()}
-          </span>
-        ))
+        daysOfMonth
+          .slice(i, i + 7)
+          .map(day => <DayView key={day.value.getTime()} day={day} />)
       );
     }
     return result;
+  }, [daysOfMonth]);
+
+  useEffect(() => {
+    setDaysOfMonth(getDaysInMonth(month));
   }, [month]);
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-3 px-4">
       {dayElements.map((row, i) => (
-        <div key={`calendar-row-${i}`} className="flex flex-row">
+        <div key={`calendar-row-${i}`} className="flex flex-row gap-3">
           {row}
         </div>
       ))}
