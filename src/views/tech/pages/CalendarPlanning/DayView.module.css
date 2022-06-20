@@ -1,0 +1,36 @@
+@tailwind components;
+
+@layer components {
+  .card {
+    flex: 1 1 100%;
+    @apply text-gray-400 bg-gray-50;
+  }
+  .card .card-header {
+    text-align: right;
+  }
+  .card .card-icon {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    color: inherit;
+  }
+
+  .card--current {
+    @apply text-black;
+  }
+  .card--current .card-icon {
+    @apply text-gray-600;
+  }
+
+  .card--active {
+    @apply bg-blue-600 text-white;
+  }
+  .card--active .card-header {
+    font-weight: 500;
+    color: inherit;
+  }
+  .card--active .card-icon {
+    color: inherit;
+  }
+}

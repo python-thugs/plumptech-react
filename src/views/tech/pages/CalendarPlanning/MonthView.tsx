@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import Adapter from "@date-io/date-fns";
 import {ru} from "date-fns/locale";
 import DayView from "./DayView";
@@ -39,10 +39,12 @@ function getDaysInMonth(date: Date): Day[] {
 }
 
 interface IProps {
+  active: Date;
   month: Date;
+  onDateChange: (date: Date) => void;
 }
 
-const MonthView: React.FC<IProps> = ({month}) => {
+const MonthView: React.FC<IProps> = ({active, month, onDateChange}) => {
   const [daysOfMonth, setDaysOfMonth] = useState(getDaysInMonth(month));
   const dayElements = useMemo(() => {
     let result = [];
@@ -50,7 +52,14 @@ const MonthView: React.FC<IProps> = ({month}) => {
       result.push(
         daysOfMonth
           .slice(i, i + 7)
-          .map(day => <DayView key={day.value.getTime()} day={day} />)
+          .map(day => (
+            <DayView
+              key={day.value.getTime()}
+              active={adapter.isSameDay(day.value, active)}
+              day={day}
+              onClick={onDateChange}
+            />
+          ))
       );
     }
     return result;
