@@ -2,12 +2,13 @@ import {useEffect, useMemo} from "react";
 import {Routes, Route, useNavigate} from "react-router-dom";
 import {QueryClient, QueryClientProvider} from "react-query";
 // custom imports
-import LoginPage from "./views/default/pages/LoginPage";
-import AdminView from "./views/admin";
-import {useAppSelector} from "./store";
-import {PostEnum} from "./api/types";
 import AppBar from "./components/AppBar";
 import Sidebar from "./components/SideBar";
+import LoginPage from "./views/default/pages/LoginPage";
+import AdminView from "./views/admin";
+import TechnicianView from "./views/tech";
+import {useAppSelector} from "./store";
+import {PostEnum} from "./api/types";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,8 @@ function App() {
     switch (user.post?.id) {
       case PostEnum.Администратор:
         return <AdminView />;
+      case PostEnum["Старший техник"]:
+        return <TechnicianView />;
       default:
         return null;
     }
