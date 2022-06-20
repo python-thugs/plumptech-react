@@ -24,10 +24,10 @@
   }
 
   .card--active {
-    @apply bg-blue-300 text-white;
+    @apply bg-indigo-300 text-white;
   }
   .card--active.card--current {
-    @apply bg-blue-600 text-white;
+    @apply bg-indigo-700 text-white;
   }
   .card--active .card-header {
     font-weight: 500;

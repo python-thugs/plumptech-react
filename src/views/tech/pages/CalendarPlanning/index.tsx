@@ -1,9 +1,11 @@
 import {useCallback, useEffect, useState} from "react";
 import T from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
+import FAB from "@mui/material/Fab";
 // icons
 import LeftIcon from "@mui/icons-material/ChevronLeft";
 import RightIcon from "@mui/icons-material/ChevronRight";
+import PlusIcon from "@mui/icons-material/Add";
 // custom imports
 import MonthView, {adapter} from "./MonthView";
 import InformationView from "./InformationView";
@@ -30,7 +32,7 @@ const CalendarPlanning = () => {
 
   return (
     <div className="flex flex-row h-full w-full">
-      <div className="flex flex-col py-12 gap-3 bg-gray-100 h-full flex-1">
+      <div className="flex flex-col py-4 gap-4 bg-gray-100 h-full flex-1 relative">
         <div className="flex flex-row items-center justify-center gap-4">
           <IconButton onClick={selectPreviousMonth}>
             <LeftIcon />
@@ -51,6 +53,9 @@ const CalendarPlanning = () => {
           month={currentMonth}
           onDateChange={handleDateSelect}
         />
+        <FAB className="absolute right-4 bottom-8" color="primary">
+          <PlusIcon />
+        </FAB>
       </div>
       <InformationView date={currentMonth} />
     </div>

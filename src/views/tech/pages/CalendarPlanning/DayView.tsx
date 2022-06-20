@@ -33,16 +33,18 @@ const DayView: React.FC<IProps> = ({active, day, onClick}) => {
       elevation={current ? 1 : 0}
       onClick={handleClick}
     >
-      <CardContent className="flex flex-col gap-2 !px-4 !pt-3 !pb-4">
+      <CardContent className="flex flex-col gap-0 !px-4 !pt-3 !pb-4">
         <T variant="body1" component="p" className={styles["card-header"]}>
           {value.getDate()}
         </T>
-        <T variant="body2" component="p" className={styles["card-icon"]}>
-          <CogIcon fontSize="small" className={styles["icon"]} />2
-        </T>
-        <T variant="body2" component="p" className={styles["card-icon"]}>
-          <TimerIcon fontSize="small" className={styles["icon"]} />2
-        </T>
+        <div className="flex flex-col gap-2">
+          <T variant="body2" component="p" className={styles["card-icon"]}>
+            <CogIcon fontSize="small" className={styles["icon"]} />2
+          </T>
+          <T variant="body2" component="p" className={styles["card-icon"]}>
+            <TimerIcon fontSize="small" className={styles["icon"]} />2
+          </T>
+        </div>
       </CardContent>
     </Card>
   );

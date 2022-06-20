@@ -102,7 +102,7 @@ const UserInfoDialog: React.FC<IProps> = ({open, onClose, ...user}) => {
         confirmText="Закрыть"
         confirmType="inherit"
         confirmVariant="text"
-        confirmClass="text-gray-500 hover:text-blue-600"
+        confirmClass="text-gray-500 hover:text-indigo-700"
         cancelVariant="contained"
       />
     </>

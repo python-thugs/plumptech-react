@@ -17,7 +17,7 @@ interface IProps {
 const InformationView: React.FC<IProps> = ({date}) => {
   const dateDisplay = useMemo(
     () => (
-      <div className="flex flex-col text-center py-5 bg-blue-600 text-white">
+      <div className="flex flex-col text-center py-5 bg-indigo-700 text-white">
         <T component="h4" variant="h4" className="uppercase">
           {adapter.format(date, "month")}
         </T>
