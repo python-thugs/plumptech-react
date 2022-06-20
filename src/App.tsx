@@ -17,7 +17,7 @@ function App() {
 
   useEffect(() => {
     if (!user.post) navigate("/login", {replace: true});
-  }, []); // eslint-disable-line
+  }, [user.post]); // eslint-disable-line
 
   const appView = useMemo(() => {
     switch (user.post?.id) {

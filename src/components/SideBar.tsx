@@ -11,13 +11,16 @@ import MenuClosedIcon from "@mui/icons-material/Menu";
 import MenuOpenedIcon from "@mui/icons-material/MenuOpen";
 import LogoutIcon from "@mui/icons-material/Logout";
 import styles from "./SideBar.module.css";
+import {useAppDispatch} from "../store";
+import {setUserAction} from "../store/auth";
 
 const DrawerAction: React.FC<{
   open: boolean;
   text: string;
   icon: JSX.Element;
-}> = ({open, text, icon}) => (
-  <ListItem disablePadding>
+  onClick: React.ComponentProps<typeof ListItem>["onClick"];
+}> = ({open, text, icon, onClick}) => (
+  <ListItem disablePadding onClick={onClick}>
     <ListItemButton className={`gap-2 ${open ? "pl-2 pr-6" : "px-2 "}`}>
       <ListItemIcon className="min-w-0">{icon}</ListItemIcon>
       <ListItemText
@@ -29,11 +32,16 @@ const DrawerAction: React.FC<{
 );
 
 const Sidebar = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleMenuOpen = useCallback(() => {
     setOpen(!open);
   }, [open]);
+
+  const handleLogoutClick = useCallback(() => {
+    dispatch(setUserAction(undefined));
+  }, []);
 
   return (
     <Drawer
@@ -61,6 +69,7 @@ const Sidebar = () => {
         open={open}
         icon={<LogoutIcon className={styles["icon"]} />}
         text="Выйти"
+        onClick={handleLogoutClick}
       />
     </Drawer>
   );
