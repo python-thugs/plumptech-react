@@ -8,7 +8,7 @@ let adapter = new Adapter({locale: ru});
  * Function that returns normalized array of days for current month
  *
  * @param {Date} date - date that will be used for getting month
- * @returns {Date[]} array of days
+ * @returns array of days
  */
 function getDaysInMonth(date: Date) {
   let firstDay = adapter.startOfMonth(date);
@@ -31,3 +31,31 @@ function getDaysInMonth(date: Date) {
 
   return [...startFill, ...days, ...endFill];
 }
+
+const MonthView = () => {
+  const month = useMemo(() => getDaysInMonth(new Date()), []);
+  const dayElements = useMemo(() => {
+    let result = [];
+    for (let i = 0; i < month.length; i += 7) {
+      result.push(
+        month.slice(i, i + 7).map(day => (
+          <span key={day.getTime()} className="w-8 h-8">
+            {day.getDate()}
+          </span>
+        ))
+      );
+    }
+    return result;
+  }, [month]);
+  return (
+    <div className="flex flex-col">
+      {dayElements.map((row, i) => (
+        <div key={`calendar-row-${i}`} className="flex flex-row">
+          {row}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default MonthView;
