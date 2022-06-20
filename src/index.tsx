@@ -12,7 +12,30 @@ import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
 import {store, persistor} from "./store";
 
-const theme = createTheme({});
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: "#c7d2fe",
+      main: "#6366f1",
+      dark: "#4338ca",
+    },
+    grey: {
+      50: "#f9fafb",
+      100: "#f3f4f6",
+      200: "#e5e7eb",
+      300: "#d1d5db",
+      400: "#9ca3af",
+      500: "#6b7280",
+      600: "#4b5563",
+      700: "#374151",
+      800: "#1f2937",
+      900: "#111827",
+    },
+    action: {
+      active: "#4b5563",
+    },
+  },
+});
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
