@@ -1,10 +1,10 @@
 import axios from "axios";
 import {joinPath} from ".";
-import {IMaintenance} from "../types";
+import {convertMaintenanceDates, ResponseMaintenance} from "../maintenance";
 
-export type ResponseAll = IMaintenance[];
-export type ResponseNext = {next: IMaintenance};
-export type ResponseLast = {last: IMaintenance};
+type ResponseAll = ResponseMaintenance[];
+type ResponseNext = {next: ResponseMaintenance};
+type ResponseLast = {last: ResponseMaintenance};
 
 export async function getMaintenances(
   id: number,
@@ -14,8 +14,18 @@ export async function getMaintenances(
     throw {error: true, message: "id should be provided!"};
   }
   const response = await axios.get<ResponseAll | ResponseLast | ResponseNext>(
-    joinPath("maintenances"),
+    joinPath(id.toString(), "maintenances"),
     {params: config}
   );
-  return response.data;
+  if (Object.hasOwn(response.data, "map")) {
+    return (response.data as ResponseAll).map(convertMaintenanceDates);
+  }
+  return {
+    last:
+      (response.data as ResponseLast).last &&
+      convertMaintenanceDates((response.data as ResponseLast).last),
+    next:
+      (response.data as ResponseNext).next &&
+      convertMaintenanceDates((response.data as ResponseNext).next),
+  };
 }
