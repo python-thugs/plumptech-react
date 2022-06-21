@@ -5,14 +5,10 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import T from "@mui/material/Typography";
 // custom imports
-import {
-  getMaintenances,
-  ResponseNext,
-  ResponseLast,
-} from "../../../../api/auto/getMaintenances";
+import {getMaintenances} from "../../../../api/auto/getMaintenances";
 import styles from "./AutomobilePark.module.css";
 import {useQuery} from "react-query";
-import {IAuto, WithId} from "../../../../api/types";
+import {IAuto, IMaintenance, WithId} from "../../../../api/types";
 
 interface IProps {
   onCheckboxClick: React.ComponentProps<typeof Checkbox>["onClick"];
@@ -31,9 +27,11 @@ const AutoRow: React.FC<IProps & WithId<IAuto>> = ({
   const {data, isLoading} = useQuery(
     ["auto-maintenances", id],
     () =>
-      getMaintenances(id, {next: true, last: true}) as Promise<
-        ResponseNext & ResponseLast
-      >
+      // @ts-ignore
+      getMaintenances(id, {next: true, last: true}) as {
+        last?: IMaintenance;
+        next?: IMaintenance;
+      }
   );
 
   return (
@@ -51,10 +49,10 @@ const AutoRow: React.FC<IProps & WithId<IAuto>> = ({
       </TableCell>
       <TableCell className={styles["table-column"]}>{garagePlate}</TableCell>
       <TableCell className={styles["table-column"]}>
-        {data && adapter.format(data.last.end, "shortDate")}
+        {data && data.next ? adapter.format(data.next.start, "fullDate") : "—"}
       </TableCell>
       <TableCell className={styles["table-column"]}>
-        {data && adapter.format(data.next.start, "shortDate")}
+        {data && data.last ? adapter.format(data.last.end, "fullDate") : "—"}
       </TableCell>
     </TableRow>
   );
