@@ -23,8 +23,8 @@ export interface IMaintenance {
   start: Date;
   deadline: Date;
   end: Date;
-  auto: number | IAuto;
-  status: number | IStatus;
+  auto: IAuto;
+  status: IStatus;
 }
 
 export interface IAuto {

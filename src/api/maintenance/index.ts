@@ -1,5 +1,5 @@
 import {joinPath as rootJoin} from "..";
-import {WithId} from "../types";
+import {WithId, IAuto, IStatus} from "../types";
 export {getMaintenances} from "./getMaintenances";
 
 export function joinPath(...paths: string[]) {
@@ -7,9 +7,9 @@ export function joinPath(...paths: string[]) {
 }
 
 export type ResponseMaintenance = WithId<{
-  auto: number;
   deadline: string;
   end: string;
   start: string;
-  status: number;
+  auto: IAuto;
+  status: IStatus;
 }>;
