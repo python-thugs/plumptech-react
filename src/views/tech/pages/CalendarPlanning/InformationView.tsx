@@ -9,12 +9,15 @@ import CogIcon from "@mui/icons-material/Settings";
 import TimerIcon from "@mui/icons-material/Timer";
 // custom imports
 import {adapter} from "./MonthView";
+import {IMaintenance} from "../../../../api/types";
+import InformationViewItem from "./InformationViewItem";
 
 interface IProps {
   date: Date;
+  maintenances: IMaintenance[];
 }
 
-const InformationView: React.FC<IProps> = ({date}) => {
+const InformationView: React.FC<IProps> = ({date, maintenances}) => {
   const dateDisplay = useMemo(
     () => (
       <div className="flex flex-col text-center py-5 bg-indigo-700 text-white">
@@ -31,6 +34,22 @@ const InformationView: React.FC<IProps> = ({date}) => {
     ),
     [date]
   );
+
+  const [plannedMaintenancesList, deadlineMaintenancesList] = useMemo(() => {
+    let planned = [],
+      deadline = [];
+    for (let i = 0; i < maintenances.length; ++i) {
+      const maintenance = maintenances[i];
+      if (adapter.isSameDay(maintenance.start, date)) {
+        planned.push(<InformationViewItem {...maintenance} />);
+      }
+      if (adapter.isSameDay(maintenance.end, date)) {
+        deadline.push(<InformationViewItem {...maintenance} />);
+      }
+    }
+    return [planned, deadline];
+  }, [date, maintenances]);
+
   return (
     <Paper elevation={1} className="min-w-[300px]">
       {dateDisplay}
@@ -43,9 +62,13 @@ const InformationView: React.FC<IProps> = ({date}) => {
             <CogIcon />
           </ListItemIcon>
         </ListItem>
-        <ListItem>
-          <T variant="body1">Нет запланированных задач</T>
-        </ListItem>
+        {plannedMaintenancesList.length ? (
+          plannedMaintenancesList
+        ) : (
+          <ListItem>
+            <T variant="body1">Нет запланированных задач</T>
+          </ListItem>
+        )}
       </List>
       <List className="py-3">
         <ListItem className="justify-between">
@@ -56,9 +79,13 @@ const InformationView: React.FC<IProps> = ({date}) => {
             <TimerIcon />
           </ListItemIcon>
         </ListItem>
-        <ListItem>
-          <T variant="body1">Нет запланированных задач</T>
-        </ListItem>
+        {deadlineMaintenancesList.length ? (
+          deadlineMaintenancesList
+        ) : (
+          <ListItem>
+            <T variant="body1">Нет запланированных задач</T>
+          </ListItem>
+        )}
       </List>
     </Paper>
   );

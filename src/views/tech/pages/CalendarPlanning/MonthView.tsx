@@ -78,7 +78,7 @@ const MonthView: React.FC<IProps> = ({
       );
     }
     return result;
-  }, [daysOfMonth]);
+  }, [active, daysOfMonth, maintenances, onDateChange]);
 
   useEffect(() => {
     setDaysOfMonth(getDaysInMonth(month));

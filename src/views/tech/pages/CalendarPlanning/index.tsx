@@ -63,7 +63,10 @@ const CalendarPlanning = () => {
           <PlusIcon />
         </FAB>
       </div>
-      <InformationView date={currentMonth} />
+      <InformationView
+        date={currentMonth}
+        maintenances={maintenances.data || []}
+      />
     </div>
   );
 };

@@ -8,7 +8,6 @@ import TimerIcon from "@mui/icons-material/Timer";
 // custom imports
 import {Day} from "./MonthView";
 import styles from "./DayView.module.css";
-import {IMaintenance} from "../../../../api/types";
 
 interface IProps {
   active: boolean;
@@ -34,7 +33,7 @@ const DayView: React.FC<IProps> = ({
     return className;
   }, [current, active]);
 
-  const handleClick = useCallback(() => onClick(value), [value]);
+  const handleClick = useCallback(() => onClick(value), [onClick, value]);
 
   return (
     <Card
