@@ -24,7 +24,7 @@ const AutoRow: React.FC<IProps & WithId<IAuto>> = ({
   model,
   id,
 }) => {
-  const {data, isLoading} = useQuery(
+  const {data} = useQuery(
     ["auto-maintenances", id],
     () =>
       // @ts-ignore

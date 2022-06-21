@@ -12,7 +12,7 @@ import {getAutomobiles} from "../../../../api/auto";
 import styles from "./AutomobilePark.module.css";
 
 const AutomobilePark = ({}) => {
-  const {data, isLoading} = useQuery("automobiles", getAutomobiles);
+  const {data} = useQuery("automobiles", getAutomobiles);
   const client = useQueryClient();
 
   return (
