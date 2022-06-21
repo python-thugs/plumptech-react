@@ -20,3 +20,15 @@ export type Error<T = any> = {
 export function error(message = "", body: any = undefined): Error<any> {
   return {error: true, message, body};
 }
+
+/**
+ * Helper for building URI string
+ *
+ * @param {string[]} paths - array of paths
+ * @returns {string} URI for resource
+ */
+export function joinPath(...paths: string[]): string {
+  let uri = API_ENDPOINT;
+  if (uri[uri.length - 1] !== "/") uri += "/";
+  return uri + paths.join("/");
+}
