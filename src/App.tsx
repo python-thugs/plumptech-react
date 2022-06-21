@@ -6,7 +6,7 @@ import AppBar from "./components/AppBar";
 import Sidebar from "./components/SideBar";
 import LoginPage from "./views/default/pages/LoginPage";
 import AdminView from "./views/admin";
-import TechnicianView from "./views/tech";
+import TechnicianView, {Navigation as TechnicianNavigation} from "./views/tech";
 import {useAppSelector} from "./store";
 import {PostEnum} from "./api/types";
 
@@ -20,14 +20,14 @@ function App() {
     if (!user.post) navigate("/login", {replace: true});
   }, [user.post]); // eslint-disable-line
 
-  const appView = useMemo(() => {
+  const [appView, sidebarActions] = useMemo(() => {
     switch (user.post?.id) {
       case PostEnum.Администратор:
-        return <AdminView />;
+        return [<AdminView />, null];
       case PostEnum["Старший техник"]:
-        return <TechnicianView />;
+        return [<TechnicianView />, <TechnicianNavigation />];
       default:
-        return null;
+        return [null, null];
     }
   }, [user.post]);
 
@@ -39,7 +39,7 @@ function App() {
           path="*"
           element={
             <div className="flex flex-row flex-1 flex-shrink-0 h-full w-full">
-              <Sidebar />
+              <Sidebar>{sidebarActions}</Sidebar>
 
               <div className="flex flex-col flex-1 h-full">
                 <AppBar />
