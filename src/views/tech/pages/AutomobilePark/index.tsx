@@ -1,3 +1,4 @@
+import {useCallback, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import T from "@mui/material/Typography";
 import Table from "@mui/material/Table";
@@ -6,14 +7,27 @@ import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Checkbox from "@mui/material/Checkbox";
+import Fab from "@mui/material/Fab";
+// icons
+import AddIcon from "@mui/icons-material/Add";
 // custom styles
 import AutoRow from "./AutoRow";
+import AutoDialog from "./AutoDialog";
 import {getAutomobiles} from "../../../../api/auto";
 import styles from "./AutomobilePark.module.css";
 
 const AutomobilePark = ({}) => {
   const {data} = useQuery("automobiles", getAutomobiles);
   const client = useQueryClient();
+
+  const [dialog, setDialog] = useState(false);
+  const handleAddClick = useCallback(() => {
+    setDialog(true);
+  }, []);
+  const handleDialogClose = useCallback(() => {
+    setDialog(false);
+    client.invalidateQueries("automobiles");
+  }, [client]);
 
   return (
     <div className="flex flex-col">
@@ -58,6 +72,14 @@ const AutomobilePark = ({}) => {
             ))}
         </TableBody>
       </Table>
+      <Fab
+        className="fixed bottom-10 right-5"
+        color="primary"
+        onClick={handleAddClick}
+      >
+        <AddIcon />
+      </Fab>
+      <AutoDialog open={dialog} onClose={handleDialogClose} />
     </div>
   );
 };
