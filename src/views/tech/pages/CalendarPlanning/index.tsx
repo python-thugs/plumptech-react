@@ -36,7 +36,7 @@ const CalendarPlanning = () => {
   }, [selectedDate]);
 
   return (
-    <div className="flex flex-row h-full w-full">
+    <div className="flex flex-row flex-1 w-full">
       <div className="flex flex-col py-4 gap-4 bg-gray-100 h-full flex-1 relative">
         <div className="flex flex-row items-center justify-center gap-4">
           <IconButton onClick={selectPreviousMonth}>
