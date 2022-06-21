@@ -1,8 +1,8 @@
 import axios from "axios";
 import {joinPath} from ".";
-import {IAuto} from "../types";
+import {IAuto, WithId} from "../types";
 
 export async function getAutomobiles() {
-  const response = await axios.get<IAuto[]>(joinPath());
+  const response = await axios.get<WithId<IAuto>[]>(joinPath());
   return response.data;
 }

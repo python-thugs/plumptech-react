@@ -1,3 +1,4 @@
+import {useQuery, useQueryClient} from "react-query";
 import T from "@mui/material/Typography";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
@@ -6,9 +7,14 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Checkbox from "@mui/material/Checkbox";
 // custom styles
+import AutoRow from "./AutoRow";
+import {getAutomobiles} from "../../../../api/auto";
 import styles from "./AutomobilePark.module.css";
 
 const AutomobilePark = ({}) => {
+  const {data, isLoading} = useQuery("automobiles", getAutomobiles);
+  const client = useQueryClient();
+
   return (
     <div className="flex flex-col">
       <T variant="h4" component="h4" className="px-[4.25rem] py-8">
@@ -41,6 +47,16 @@ const AutomobilePark = ({}) => {
             </TableCell>
           </TableRow>
         </TableHead>
+        <TableBody>
+          {data &&
+            data.map(auto => (
+              <AutoRow
+                key={`auto-row-${auto.id}`}
+                onCheckboxClick={() => {}}
+                {...auto}
+              />
+            ))}
+        </TableBody>
       </Table>
     </div>
   );
