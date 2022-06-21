@@ -37,4 +37,8 @@
   .card--active .card-icon {
     color: inherit;
   }
+
+  .card--today {
+    @apply border border-solid border-indigo-200 bg-indigo-50;
+  }
 }

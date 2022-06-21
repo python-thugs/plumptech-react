@@ -6,7 +6,7 @@ import T from "@mui/material/Typography";
 import CogIcon from "@mui/icons-material/Settings";
 import TimerIcon from "@mui/icons-material/Timer";
 // custom imports
-import {Day} from "./MonthView";
+import {adapter, Day} from "./MonthView";
 import styles from "./DayView.module.css";
 
 interface IProps {
@@ -16,6 +16,8 @@ interface IProps {
   deadlineMaintenances?: number;
   onClick: (date: Date) => void;
 }
+
+const today = new Date();
 
 const DayView: React.FC<IProps> = ({
   active,
@@ -30,8 +32,10 @@ const DayView: React.FC<IProps> = ({
     let className = styles["card"];
     if (current) className += " " + styles["card--current"];
     if (active) className += " " + styles["card--active"];
+    if (adapter.isSameDay(today, value))
+      className += " " + styles["card--today"];
     return className;
-  }, [current, active]);
+  }, [current, active, value]);
 
   const handleClick = useCallback(() => onClick(value), [onClick, value]);
 
