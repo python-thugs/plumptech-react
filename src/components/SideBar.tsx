@@ -1,37 +1,17 @@
-import {useCallback, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemButton from "@mui/material/ListItemButton";
 // icons
 import MenuClosedIcon from "@mui/icons-material/Menu";
 import MenuOpenedIcon from "@mui/icons-material/MenuOpen";
 import LogoutIcon from "@mui/icons-material/Logout";
-import styles from "./SideBar.module.css";
+// custom import
+import DrawerAction from "./DrawerAction";
 import {useAppDispatch} from "../store";
 import {setUserAction} from "../store/auth";
 
-const DrawerAction: React.FC<{
-  open: boolean;
-  text: string;
-  icon: JSX.Element;
-  onClick: React.ComponentProps<typeof ListItem>["onClick"];
-}> = ({open, text, icon, onClick}) => (
-  <ListItem disablePadding onClick={onClick}>
-    <ListItemButton className={`gap-2 ${open ? "pl-2 pr-6" : "px-2 "}`}>
-      <ListItemIcon className="min-w-0">{icon}</ListItemIcon>
-      <ListItemText
-        sx={{opacity: open ? 1 : 0, whiteSpace: "nowrap"}}
-        primary={text}
-      />
-    </ListItemButton>
-  </ListItem>
-);
-
-const Sidebar = () => {
+const Sidebar: React.FC<React.PropsWithChildren> = ({children}) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -42,6 +22,15 @@ const Sidebar = () => {
   const handleLogoutClick = useCallback(() => {
     dispatch(setUserAction(undefined));
   }, []);
+
+  const mainActions = useMemo(
+    () =>
+      React.Children.map(children, child => {
+        if (!React.isValidElement(child)) return child;
+        return React.cloneElement(child, {open});
+      }),
+    [children, open]
+  );
 
   return (
     <Drawer
@@ -61,13 +50,12 @@ const Sidebar = () => {
         {open ? <MenuOpenedIcon /> : <MenuClosedIcon />}
       </IconButton>
       <Divider className="mx-3" />
-      <div className="flex flex-col flex-1 items-center">
-        {open ? "open" : "close"}
-      </div>
+      {mainActions}
+      <div className="flex flex-col flex-1 items-center"></div>
       <Divider className="mx-3" />
       <DrawerAction
         open={open}
-        icon={<LogoutIcon className={styles["icon"]} />}
+        icon={<LogoutIcon />}
         text="Выйти"
         onClick={handleLogoutClick}
       />
