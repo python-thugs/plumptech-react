@@ -1,5 +1,5 @@
 import {joinPath as rootJoin} from "..";
-import {WithId, IAuto, IStatus} from "../types";
+import {WithId, IAuto, IStatus, IMaintenance} from "../types";
 export {getMaintenances} from "./getMaintenances";
 
 export function joinPath(...paths: string[]) {
@@ -13,3 +13,12 @@ export type ResponseMaintenance = WithId<{
   auto: IAuto;
   status: IStatus;
 }>;
+
+export const convertMaintenanceDates = (
+  m: ResponseMaintenance
+): IMaintenance => ({
+  ...m,
+  start: new Date(m.start),
+  deadline: new Date(m.deadline),
+  end: new Date(m.end),
+});
