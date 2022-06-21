@@ -40,6 +40,7 @@ const Sidebar: React.FC<React.PropsWithChildren> = ({children}) => {
           open ? "w-[320px]" : "w-16"
         } transition-all pt-2 gap-2`,
       }}
+      PaperProps={{elevation: open ? 3 : 0}}
       variant="permanent"
       open={open}
     >

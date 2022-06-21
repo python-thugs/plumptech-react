@@ -1,3 +1,5 @@
+import {useCallback} from "react";
+import {useNavigate} from "react-router-dom";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -7,21 +9,31 @@ const DrawerAction: React.FC<{
   open: boolean;
   text: string;
   icon: JSX.Element;
-  onClick: React.ComponentProps<typeof ListItem>["onClick"];
-}> = ({open, text, icon, onClick}) => (
-  <ListItem disablePadding onClick={onClick}>
-    <ListItemButton className={`gap-2 ${open ? "pl-2 pr-6" : "px-2 "}`}>
-      <ListItemIcon className="min-w-0 p-3">{icon}</ListItemIcon>
-      <ListItemText
-        sx={{
-          opacity: open ? 1 : 0,
-          whiteSpace: "nowrap",
-          width: open ? "unset" : 0,
-        }}
-        primary={text}
-      />
-    </ListItemButton>
-  </ListItem>
-);
+  uri?: string;
+  onClick?: () => void;
+}> = ({open, text, icon, uri, onClick}) => {
+  const navigate = useNavigate();
+
+  const handleClick = useCallback(() => {
+    if (uri) navigate(uri);
+    if (onClick) onClick();
+  }, [uri]);
+
+  return (
+    <ListItem disablePadding onClick={handleClick}>
+      <ListItemButton className={`gap-2 ${open ? "pl-2 pr-6" : "px-2 "}`}>
+        <ListItemIcon className="min-w-0 p-3">{icon}</ListItemIcon>
+        <ListItemText
+          sx={{
+            opacity: open ? 1 : 0,
+            whiteSpace: "nowrap",
+            width: open ? "unset" : 0,
+          }}
+          primary={text}
+        />
+      </ListItemButton>
+    </ListItem>
+  );
+};
 
 export default DrawerAction;
