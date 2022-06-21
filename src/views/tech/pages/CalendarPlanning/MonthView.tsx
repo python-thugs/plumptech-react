@@ -1,7 +1,8 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Adapter from "@date-io/date-fns";
 import {ru} from "date-fns/locale";
 import DayView from "./DayView";
+import {IMaintenance} from "../../../../api/types";
 
 export const adapter = new Adapter({locale: ru});
 
@@ -42,24 +43,38 @@ interface IProps {
   active: Date;
   month: Date;
   onDateChange: (date: Date) => void;
+  maintenances?: IMaintenance[];
 }
 
-const MonthView: React.FC<IProps> = ({active, month, onDateChange}) => {
+const MonthView: React.FC<IProps> = ({
+  active,
+  maintenances,
+  month,
+  onDateChange,
+}) => {
   const [daysOfMonth, setDaysOfMonth] = useState(getDaysInMonth(month));
   const dayElements = useMemo(() => {
     let result = [];
     for (let i = 0; i < daysOfMonth.length; i += 7) {
       result.push(
-        daysOfMonth
-          .slice(i, i + 7)
-          .map(day => (
+        daysOfMonth.slice(i, i + 7).map(day => {
+          const plannedMaintenances = maintenances?.filter(({start}) =>
+            adapter.isSameDay(start, day.value)
+          ).length;
+          const deadlineMaintenances = maintenances?.filter(({end}) =>
+            adapter.isSameDay(end, day.value)
+          ).length;
+          return (
             <DayView
               key={day.value.getTime()}
               active={adapter.isSameDay(day.value, active)}
               day={day}
               onClick={onDateChange}
+              plannedMaintenances={plannedMaintenances}
+              deadlineMaintenances={deadlineMaintenances}
             />
-          ))
+          );
+        })
       );
     }
     return result;

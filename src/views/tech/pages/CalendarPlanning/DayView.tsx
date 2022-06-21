@@ -8,16 +8,25 @@ import TimerIcon from "@mui/icons-material/Timer";
 // custom imports
 import {Day} from "./MonthView";
 import styles from "./DayView.module.css";
+import {IMaintenance} from "../../../../api/types";
 
 interface IProps {
   active: boolean;
   day: Day;
+  plannedMaintenances?: number;
+  deadlineMaintenances?: number;
   onClick: (date: Date) => void;
 }
 
-const DayView: React.FC<IProps> = ({active, day, onClick}) => {
+const DayView: React.FC<IProps> = ({
+  active,
+  day,
+  deadlineMaintenances,
+  plannedMaintenances,
+  onClick,
+}) => {
   const {value, current} = day;
-  console.debug(styles);
+
   const cardClassName = useMemo(() => {
     let className = styles["card"];
     if (current) className += " " + styles["card--current"];
@@ -39,10 +48,20 @@ const DayView: React.FC<IProps> = ({active, day, onClick}) => {
         </T>
         <div className="flex flex-col gap-2">
           <T variant="body2" component="p" className={styles["card-icon"]}>
-            <CogIcon fontSize="small" className={styles["icon"]} />2
+            {plannedMaintenances ? (
+              <>
+                <CogIcon fontSize="small" className={styles["icon"]} />
+                {plannedMaintenances}
+              </>
+            ) : undefined}
           </T>
           <T variant="body2" component="p" className={styles["card-icon"]}>
-            <TimerIcon fontSize="small" className={styles["icon"]} />2
+            {deadlineMaintenances ? (
+              <>
+                <TimerIcon fontSize="small" className={styles["icon"]} />
+                {deadlineMaintenances}
+              </>
+            ) : undefined}
           </T>
         </div>
       </CardContent>

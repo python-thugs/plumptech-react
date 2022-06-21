@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
 import T from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import FAB from "@mui/material/Fab";
@@ -9,10 +10,14 @@ import PlusIcon from "@mui/icons-material/Add";
 // custom imports
 import MonthView, {adapter} from "./MonthView";
 import InformationView from "./InformationView";
+import {getMaintenances} from "../../../../api/maintenance";
 
 const CalendarPlanning = () => {
   const [currentMonth, setMonth] = useState(new Date());
   const [selectedDate, setDate] = useState(new Date());
+  // react-query
+  const client = useQueryClient();
+  const maintenances = useQuery("maintenances", getMaintenances);
 
   const selectPreviousMonth = useCallback(() => {
     setMonth(adapter.addMonths(currentMonth, -1));
@@ -52,6 +57,7 @@ const CalendarPlanning = () => {
           active={selectedDate}
           month={currentMonth}
           onDateChange={handleDateSelect}
+          maintenances={maintenances.data}
         />
         <FAB className="absolute right-4 bottom-8" color="primary">
           <PlusIcon />
