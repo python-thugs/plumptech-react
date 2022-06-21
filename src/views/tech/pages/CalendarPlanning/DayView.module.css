@@ -14,6 +14,7 @@
     align-items: center;
     gap: 0.5rem;
     color: inherit;
+    min-height: 1.25rem;
   }
 
   .card--current {
