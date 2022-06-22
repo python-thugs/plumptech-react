@@ -19,7 +19,12 @@ import {DesktopDatePicker} from "@mui/x-date-pickers/DesktopDatePicker";
 // custom imports
 import MaterialsTable from "./MaterialsTable";
 import {getAutomobiles} from "../../../../api/auto";
-import {IAuto, IJob, NonNullable, WithId} from "../../../../api/types";
+import {
+  IAuto,
+  JobWithMaterials,
+  NonNullable,
+  WithId,
+} from "../../../../api/types";
 
 const ListItem: React.FC<React.ComponentProps<typeof MuiListItemButton>> = ({
   className,
@@ -59,8 +64,18 @@ const CreateMaintenancePage = () => {
   );
 
   //#region Jobs management
-  const [jobs, setJobs] = useState<IJob[]>([
-    {name: "This is a job", description: "description"},
+  const [jobs, setJobs] = useState<JobWithMaterials[]>([
+    {
+      name: "This is a job",
+      description: "description",
+      materials: [
+        {
+          name: "test",
+          code: "123",
+          price: 10.6,
+        },
+      ],
+    },
   ]);
 
   const [selectedJobIndex, selectJob] = useState<number>();
@@ -70,19 +85,25 @@ const CreateMaintenancePage = () => {
     []
   );
 
+  const updateJob = useCallback(
+    (property: keyof JobWithMaterials, value: any) => {
+      if (selectedJobIndex == undefined) return;
+      setJobs([
+        ...jobs.slice(0, selectedJobIndex),
+        {...jobs[selectedJobIndex], [property]: value},
+        ...jobs.slice(selectedJobIndex + 1),
+      ]);
+    },
+    [selectedJobIndex, jobs]
+  );
+
   const handleJobInputChange = useCallback<
     React.ChangeEventHandler<HTMLInputElement>
   >(
     ({target}) => {
-      if (selectedJobIndex == undefined) return;
-
-      setJobs([
-        ...jobs.slice(0, selectedJobIndex),
-        {...jobs[selectedJobIndex], [target.name]: target.value},
-        ...jobs.slice(selectedJobIndex + 1),
-      ]);
+      updateJob(target.name as keyof JobWithMaterials, target.value);
     },
-    [jobs, selectedJobIndex]
+    [updateJob]
   );
 
   //#endregion
@@ -99,10 +120,53 @@ const CreateMaintenancePage = () => {
     if (!newDate || Number.isNaN(newDate.getDate())) return;
     setEndDate(newDate);
   }, []);
-  //#endregionuseState
+  //#endregion
+
+  //#region Materials management
+  const handleMaterialAdd = useCallback<
+    React.ComponentProps<typeof MaterialsTable>["onMaterialAdd"]
+  >(() => {
+    if (selectedJobIndex == undefined) return;
+    updateJob("materials", [
+      ...(jobs[selectedJobIndex]?.materials || []),
+      {name: "", code: "", price: 0},
+    ]);
+  }, [updateJob]);
+
+  const handleMaterialChange = useCallback<
+    React.ComponentProps<typeof MaterialsTable>["onMaterialChange"]
+  >(
+    (index, material) => {
+      if (selectedJobIndex == undefined) return;
+      const materials = jobs[selectedJobIndex].materials;
+      if (!materials) return;
+      updateJob("materials", [
+        ...materials.slice(0, index),
+        material,
+        ...materials.slice(index + 1),
+      ]);
+    },
+    [updateJob]
+  );
+
+  const handleMaterialDelete = useCallback<
+    React.ComponentProps<typeof MaterialsTable>["onMaterialDelete"]
+  >(
+    index => {
+      if (selectedJobIndex == undefined) return;
+      const materials = jobs[selectedJobIndex].materials;
+      if (!materials) return;
+      updateJob("materials", [
+        ...materials.slice(0, index),
+        ...materials.slice(index + 1),
+      ]);
+    },
+    [updateJob]
+  );
+  //#endregion
 
   return (
-    <main className="flex flex-col h-full">
+    <main className="flex flex-col flex-1 overflow-hidden">
       <T variant="h4" component="h4" className="px-9 py-6">
         Создание технического обслуживания
       </T>
@@ -144,7 +208,7 @@ const CreateMaintenancePage = () => {
         </div>
       </div>
       <Divider />
-      <div className="flex flex-row w-full h-full">
+      <div className="flex flex-row w-full flex-1 overflow-auto">
         <div className="flex flex-col h-full w-fit min-w-[480px] border-solid border-0 border-r border-gray-200">
           <T variant="h6" component="h6" className="px-6 py-4">
             Список задач
@@ -162,7 +226,7 @@ const CreateMaintenancePage = () => {
           </List>
         </div>
         {selectedJobIndex != undefined && (
-          <div className="flex flex-col h-full flex-1 px-6 py-4 gap-6">
+          <div className="flex flex-col flex-1 px-6 py-4 gap-6 overflow-y-auto">
             <T variant="h6" component="h6" className="px-3">
               Основная информация
             </T>
@@ -183,7 +247,12 @@ const CreateMaintenancePage = () => {
             <T variant="h6" component="h6" className="px-3">
               Требуемые материалы
             </T>
-            <MaterialsTable />
+            <MaterialsTable
+              materials={jobs[selectedJobIndex].materials}
+              onMaterialAdd={handleMaterialAdd}
+              onMaterialChange={handleMaterialChange}
+              onMaterialDelete={handleMaterialDelete}
+            />
           </div>
         )}
       </div>
