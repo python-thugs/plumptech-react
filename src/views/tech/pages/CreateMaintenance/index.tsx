@@ -1,6 +1,7 @@
 import {useCallback, useMemo, useState} from "react";
 import {useQuery} from "react-query";
 import T from "@mui/material/Typography";
+import Toolbar from "@mui/material/Toolbar";
 // list
 import List from "@mui/material/List";
 import MuiListItemButton from "@mui/material/ListItemButton";
@@ -28,6 +29,8 @@ import {
   NonNullable,
   WithId,
 } from "../../../../api/types";
+import {useNavigate} from "react-router-dom";
+import {createMaintenance} from "../../../../api/maintenance/create";
 
 const ListItem: React.FC<React.ComponentProps<typeof MuiListItemButton>> = ({
   className,
@@ -43,6 +46,12 @@ const TODAY = new Date();
 
 const CreateMaintenancePage = () => {
   const automobilesQuery = useQuery("automobiles", getAutomobiles);
+  const navigate = useNavigate();
+
+  const handleCancelClick = useCallback(
+    () => navigate("/", {replace: true}),
+    [navigate]
+  );
 
   const autoItems = useMemo(() => {
     if (!automobilesQuery.data) return;
@@ -67,19 +76,7 @@ const CreateMaintenancePage = () => {
   );
 
   //#region Jobs management
-  const [jobs, setJobs] = useState<JobWithMaterials[]>([
-    {
-      name: "This is a job",
-      description: "description",
-      materials: [
-        {
-          name: "test",
-          code: "123",
-          price: 10.6,
-        },
-      ],
-    },
-  ]);
+  const [jobs, setJobs] = useState<JobWithMaterials[]>([]);
 
   const [selectedJobIndex, selectJob] = useState<number>();
 
@@ -172,6 +169,23 @@ const CreateMaintenancePage = () => {
     [updateJob]
   );
   //#endregion
+
+  const handleMaintenanceCreate = useCallback(() => {
+    if (!auto || !endDate || !startDate) return;
+    createMaintenance({
+      start: startDate,
+      deadline: endDate,
+      auto: auto.id,
+      status: 1,
+      jobs,
+    })
+      .then(result => {
+        console.log("-> Successful creation", result);
+      })
+      .catch(err => {
+        console.error("# Error during creation: ", err);
+      });
+  }, [startDate, endDate, auto, jobs]);
 
   return (
     <main className="flex flex-col flex-1 overflow-hidden">
@@ -277,6 +291,25 @@ const CreateMaintenancePage = () => {
           </div>
         )}
       </div>
+      <Toolbar className="border-0 border-t border-solid border-gray-200 gap-6 justify-end">
+        <Button
+          color="error"
+          variant="text"
+          className="text-gray-500 hover:text-rose-600 px-6"
+          onClick={handleCancelClick}
+        >
+          Отмена
+        </Button>
+        <Button
+          disableElevation
+          color="primary"
+          variant="contained"
+          className="px-6"
+          onClick={handleMaintenanceCreate}
+        >
+          Создать
+        </Button>
+      </Toolbar>
     </main>
   );
 };

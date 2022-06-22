@@ -1,3 +1,4 @@
+import type {JobWithMaterials} from "./job/types";
 export * from "./job/types";
 
 export interface IEmployee {
@@ -24,9 +25,10 @@ export type WithId<T> = T & {id: number};
 export interface IMaintenance {
   start: Date;
   deadline: Date;
-  end: Date;
+  end?: Date;
   auto: IAuto;
   status: IStatus;
+  jobs?: JobWithMaterials[];
 }
 
 export interface IAuto {

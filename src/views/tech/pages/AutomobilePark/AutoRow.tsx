@@ -59,7 +59,7 @@ const AutoRow: React.FC<IProps & WithId<IAuto>> = ({
         {data && data.next ? adapter.format(data.next.start, "fullDate") : "—"}
       </TableCell>
       <TableCell className={styles["table-column"]}>
-        {data && data.last ? adapter.format(data.last.end, "fullDate") : "—"}
+        {data && data.last && data.last.end ? adapter.format(data.last.end, "fullDate") : "—"}
       </TableCell>
     </TableRow>
   );
