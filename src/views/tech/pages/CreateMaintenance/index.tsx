@@ -257,7 +257,9 @@ const CreateMaintenancePage = () => {
                 value={jobs[selectedJobIndex].name}
               />
               <TextField
-                label="Наименование работ"
+                multiline
+                minRows={3}
+                label="Описание работ"
                 name="description"
                 onChange={handleJobInputChange}
                 value={jobs[selectedJobIndex].description}
