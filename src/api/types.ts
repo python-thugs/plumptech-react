@@ -1,4 +1,4 @@
-export type {IJob, JobWithId} from "./job/types";
+export * from "./job/types";
 
 export interface IEmployee {
   id: number;
