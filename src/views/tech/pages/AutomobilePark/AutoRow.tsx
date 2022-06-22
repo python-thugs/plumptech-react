@@ -40,7 +40,11 @@ const AutoRow: React.FC<IProps & WithId<IAuto>> = ({
   return (
     <TableRow className="text-base">
       <TableCell className="w-0 p-2">
-        <Checkbox className="p-2" onChange={onCheckboxClick} value={selected} />
+        <Checkbox
+          className="p-2"
+          onChange={onCheckboxClick}
+          checked={selected}
+        />
       </TableCell>
       <TableCell className={styles["table-column"]}>
         <T variant="body1">
