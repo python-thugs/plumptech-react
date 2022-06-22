@@ -8,8 +8,11 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Checkbox from "@mui/material/Checkbox";
 import Fab from "@mui/material/Fab";
+import Toolbar from "@mui/material/Toolbar";
+import Button from "@mui/material/Button";
 // icons
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 // custom styles
 import AutoRow from "./AutoRow";
 import AutoDialog from "./AutoDialog";
@@ -41,17 +44,38 @@ const AutomobilePark = ({}) => {
       },
     [selected]
   );
+  const handleHeaderCheckboxChange = useCallback(
+    (_: any, checked: boolean) => {
+      if (checked) setSelected(data?.map((_, i) => i) || []);
+      else setSelected([]);
+    },
+    [data]
+  );
 
   return (
     <div className="flex flex-col">
-      <T variant="h4" component="h4" className="px-[4.25rem] py-8">
+      <T variant="h4" component="h4" className="px-[4.25rem] pt-8 pb-4">
         Парк автомобилей
       </T>
+      <Toolbar variant="dense" className="pl-[3.75rem] pr-5">
+        {selected.length > 0 && (
+          <Button startIcon={<DeleteIcon />} color="error">
+            Удалить выбранное
+          </Button>
+        )}
+      </Toolbar>
       <Table className="table-auto">
         <TableHead>
           <TableRow className="text-base">
             <TableCell className="w-0 p-2">
-              <Checkbox className="p-2" />
+              <Checkbox
+                className="p-2"
+                indeterminate={
+                  selected.length > 0 && selected.length !== data?.length
+                }
+                checked={selected.length === data?.length}
+                onChange={handleHeaderCheckboxChange}
+              />
             </TableCell>
             <TableCell className={styles["table-column"]}>
               Наименование
