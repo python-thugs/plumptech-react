@@ -180,12 +180,12 @@ const CreateMaintenancePage = () => {
       jobs,
     })
       .then(result => {
-        console.log("-> Successful creation", result);
+        navigate("/", {replace: true});
       })
       .catch(err => {
         console.error("# Error during creation: ", err);
       });
-  }, [startDate, endDate, auto, jobs]);
+  }, [startDate, endDate, auto, jobs, navigate]);
 
   return (
     <main className="flex flex-col flex-1 overflow-hidden">
