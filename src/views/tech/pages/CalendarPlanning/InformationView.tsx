@@ -48,7 +48,7 @@ const InformationView: React.FC<IProps> = ({date, maintenances}) => {
           />
         );
       }
-      if (maintenance.end && adapter.isSameDay(maintenance.end, date)) {
+      if (adapter.isSameDay(maintenance.deadline, date)) {
         deadline.push(
           <InformationViewItem
             key={`maintenance-${maintenance.id}`}

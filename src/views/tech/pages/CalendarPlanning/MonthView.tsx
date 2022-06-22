@@ -61,8 +61,8 @@ const MonthView: React.FC<IProps> = ({
           const plannedMaintenances = maintenances?.filter(({start}) =>
             adapter.isSameDay(start, day.value)
           ).length;
-          const deadlineMaintenances = maintenances?.filter(
-            ({end}) => !!end && adapter.isSameDay(end, day.value)
+          const deadlineMaintenances = maintenances?.filter(({deadline}) =>
+            adapter.isSameDay(deadline, day.value)
           ).length;
           return (
             <DayView
