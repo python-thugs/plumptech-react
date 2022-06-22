@@ -10,22 +10,29 @@ import Checkbox from "@mui/material/Checkbox";
 import Fab from "@mui/material/Fab";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
+import Snackbar from "@mui/material/Snackbar";
 // icons
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 // custom styles
 import AutoRow from "./AutoRow";
 import AutoDialog from "./AutoDialog";
-import {getAutomobiles} from "../../../../api/auto";
+import ConfirmationDialog from "../../../../components/ConfirmationDialog";
+import {deleteAuto, getAutomobiles} from "../../../../api/auto";
 import styles from "./AutomobilePark.module.css";
+import {Alert} from "@mui/material";
 
 const AutomobilePark = ({}) => {
+  const [feedback, setFeedback] = useState<
+    | {type: React.ComponentProps<typeof Alert>["color"]; message: string}
+    | undefined
+  >();
   const {data} = useQuery("automobiles", getAutomobiles);
   const client = useQueryClient();
 
-  const [dialog, setDialog] = useState(false);
+  const [dialog, setDialog] = useState<"add" | "confirm" | false>(false);
   const handleAddClick = useCallback(() => {
-    setDialog(true);
+    setDialog("add");
   }, []);
   const handleDialogClose = useCallback(() => {
     setDialog(false);
@@ -34,23 +41,41 @@ const AutomobilePark = ({}) => {
 
   const [selected, setSelected] = useState<number[]>([]);
   const createHandleCheckboxChange = useCallback(
-    (index: number): React.ComponentProps<typeof Checkbox>["onChange"] =>
+    (id: number): React.ComponentProps<typeof Checkbox>["onChange"] =>
       (_, checked) => {
         if (checked) {
-          setSelected([...selected, index]);
+          setSelected([...selected, id]);
         } else {
-          setSelected(selected.filter(s => s !== index));
+          setSelected(selected.filter(s => s !== id));
         }
       },
     [selected]
   );
   const handleHeaderCheckboxChange = useCallback(
     (_: any, checked: boolean) => {
-      if (checked) setSelected(data?.map((_, i) => i) || []);
+      if (checked) setSelected(data?.map(d => d.id) || []);
       else setSelected([]);
     },
     [data]
   );
+
+  const handleConfirmClose = useCallback<
+    React.ComponentProps<typeof ConfirmationDialog>["onClose"]
+  >(
+    confirm => {
+      setDialog(false);
+      if (!confirm) return;
+      deleteAuto(selected).then(() => {
+        setFeedback({type: "success", message: "Автомобили успешно удалены"});
+        setSelected([]);
+        client.invalidateQueries("automobiles");
+      });
+    },
+    [selected, client]
+  );
+
+  const handleConfirmOpen = useCallback(() => setDialog("confirm"), []);
+  const handleSnackbarClose = useCallback(() => setFeedback(undefined), []);
 
   return (
     <div className="flex flex-col">
@@ -59,7 +84,11 @@ const AutomobilePark = ({}) => {
       </T>
       <Toolbar variant="dense" className="pl-[3.75rem] pr-5">
         {selected.length > 0 && (
-          <Button startIcon={<DeleteIcon />} color="error">
+          <Button
+            startIcon={<DeleteIcon />}
+            color="error"
+            onClick={handleConfirmOpen}
+          >
             Удалить выбранное
           </Button>
         )}
@@ -100,11 +129,11 @@ const AutomobilePark = ({}) => {
         </TableHead>
         <TableBody>
           {data &&
-            data.map((auto, i) => (
+            data.map(auto => (
               <AutoRow
                 key={`auto-row-${auto.id}`}
-                onCheckboxClick={createHandleCheckboxChange(i)}
-                selected={selected.includes(i)}
+                onCheckboxClick={createHandleCheckboxChange(auto.id)}
+                selected={selected.includes(auto.id)}
                 {...auto}
               />
             ))}
@@ -117,7 +146,26 @@ const AutomobilePark = ({}) => {
       >
         <AddIcon />
       </Fab>
-      <AutoDialog open={dialog} onClose={handleDialogClose} />
+      <AutoDialog open={dialog === "add"} onClose={handleDialogClose} />
+      <ConfirmationDialog
+        open={dialog === "confirm"}
+        onClose={handleConfirmClose}
+        text="Вы действительно хотите удалить выбранные автомобили?"
+        confirmVariant="text"
+        confirmText="Удалить"
+        confirmType="inherit"
+        confirmClass="text-gray-500 hover:text-rose-600"
+        cancelVariant="contained"
+      />
+      <Snackbar
+        open={!!feedback}
+        onClose={handleSnackbarClose}
+        autoHideDuration={3000}
+      >
+        <Alert variant="standard" color={feedback?.type || "info"}>
+          {feedback?.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
