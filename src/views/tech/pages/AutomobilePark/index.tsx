@@ -29,6 +29,19 @@ const AutomobilePark = ({}) => {
     client.invalidateQueries("automobiles");
   }, [client]);
 
+  const [selected, setSelected] = useState<number[]>([]);
+  const createHandleCheckboxChange = useCallback(
+    (index: number): React.ComponentProps<typeof Checkbox>["onChange"] =>
+      (_, checked) => {
+        if (checked) {
+          setSelected([...selected, index]);
+        } else {
+          setSelected(selected.filter(s => s !== index));
+        }
+      },
+    [selected]
+  );
+
   return (
     <div className="flex flex-col">
       <T variant="h4" component="h4" className="px-[4.25rem] py-8">
@@ -63,10 +76,11 @@ const AutomobilePark = ({}) => {
         </TableHead>
         <TableBody>
           {data &&
-            data.map(auto => (
+            data.map((auto, i) => (
               <AutoRow
                 key={`auto-row-${auto.id}`}
-                onCheckboxClick={() => {}}
+                onCheckboxClick={createHandleCheckboxChange(i)}
+                selected={selected.includes(i)}
                 {...auto}
               />
             ))}

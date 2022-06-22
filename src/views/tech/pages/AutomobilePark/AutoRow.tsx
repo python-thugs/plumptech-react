@@ -11,12 +11,14 @@ import {useQuery} from "react-query";
 import {IAuto, IMaintenance, WithId} from "../../../../api/types";
 
 interface IProps {
-  onCheckboxClick: React.ComponentProps<typeof Checkbox>["onClick"];
+  onCheckboxClick: React.ComponentProps<typeof Checkbox>["onChange"];
+  selected: boolean;
 }
 
 const adapter = new DateFnsAdapter({locale: ru});
 
 const AutoRow: React.FC<IProps & WithId<IAuto>> = ({
+  selected,
   onCheckboxClick,
   licensePlate,
   garagePlate,
@@ -31,13 +33,14 @@ const AutoRow: React.FC<IProps & WithId<IAuto>> = ({
       getMaintenances(id, {next: true, last: true}) as {
         last?: IMaintenance;
         next?: IMaintenance;
-      }
+      },
+    {retry: false}
   );
 
   return (
     <TableRow className="text-base">
       <TableCell className="w-0 p-2">
-        <Checkbox className="p-2" onClick={onCheckboxClick} />
+        <Checkbox className="p-2" onChange={onCheckboxClick} value={selected} />
       </TableCell>
       <TableCell className={styles["table-column"]}>
         <T variant="body1">
