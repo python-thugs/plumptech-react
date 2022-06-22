@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
 import T from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import FAB from "@mui/material/Fab";
@@ -11,12 +11,12 @@ import PlusIcon from "@mui/icons-material/Add";
 import MonthView, {adapter} from "./MonthView";
 import InformationView from "./InformationView";
 import {getMaintenances} from "../../../../api/maintenance";
+import {useNavigate} from "react-router-dom";
 
 const CalendarPlanning = () => {
   const [currentMonth, setMonth] = useState(new Date());
   const [selectedDate, setDate] = useState(new Date());
   // react-query
-  const client = useQueryClient();
   const maintenances = useQuery("maintenances", getMaintenances);
 
   const selectPreviousMonth = useCallback(() => {
@@ -34,6 +34,9 @@ const CalendarPlanning = () => {
   useEffect(() => {
     setMonth(selectedDate);
   }, [selectedDate]);
+
+  const navigate = useNavigate();
+  const handleCreateClick = useCallback(() => navigate("/create"), []);
 
   return (
     <div className="flex flex-row flex-1 w-full">
@@ -59,7 +62,11 @@ const CalendarPlanning = () => {
           onDateChange={handleDateSelect}
           maintenances={maintenances.data}
         />
-        <FAB className="absolute right-4 bottom-8" color="primary">
+        <FAB
+          className="absolute right-4 bottom-8"
+          color="primary"
+          onClick={handleCreateClick}
+        >
           <PlusIcon />
         </FAB>
       </div>
