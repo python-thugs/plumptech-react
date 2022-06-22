@@ -11,11 +11,14 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
 // date pickers
 import {ru} from "date-fns/locale";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {DesktopDatePicker} from "@mui/x-date-pickers/DesktopDatePicker";
+// icons
+import AddIcon from "@mui/icons-material/Add";
 // custom imports
 import MaterialsTable from "./MaterialsTable";
 import {getAutomobiles} from "../../../../api/auto";
@@ -105,6 +108,11 @@ const CreateMaintenancePage = () => {
     },
     [updateJob]
   );
+
+  const handleJobAdd = useCallback(() => {
+    setJobs([...jobs, {name: "Новая задача"}]);
+    selectJob(jobs.length);
+  }, [jobs]);
 
   //#endregion
 
@@ -210,9 +218,20 @@ const CreateMaintenancePage = () => {
       <Divider />
       <div className="flex flex-row w-full flex-1 overflow-auto">
         <div className="flex flex-col h-full w-fit min-w-[480px] border-solid border-0 border-r border-gray-200">
-          <T variant="h6" component="h6" className="px-6 py-4">
-            Список задач
-          </T>
+          <div className="flex flex-row justify-between items-center pl-6 pr-3">
+            <T variant="h6" component="h6" className="py-4">
+              Список задач
+            </T>
+            <Button
+              variant="text"
+              color="primary"
+              endIcon={<AddIcon />}
+              className="h-fit py-2 px-2"
+              onClick={handleJobAdd}
+            >
+              Добавить
+            </Button>
+          </div>
           <List className="gap-1">
             {jobs.map((j, i) => (
               <ListItem
