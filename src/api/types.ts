@@ -1,3 +1,5 @@
+export type {IJob, JobWithId} from "./job/types";
+
 export interface IEmployee {
   id: number;
   name: string;
@@ -37,3 +39,5 @@ export interface IAuto {
 export interface IStatus {
   name: string;
 }
+
+export type NonNullable<T> = Exclude<T, null | undefined>;
