@@ -9,12 +9,12 @@ import CogIcon from "@mui/icons-material/Settings";
 import TimerIcon from "@mui/icons-material/Timer";
 // custom imports
 import {adapter} from "./MonthView";
-import {IMaintenance} from "../../../../api/types";
+import {IMaintenance, WithId} from "../../../../api/types";
 import InformationViewItem from "./InformationViewItem";
 
 interface IProps {
   date: Date;
-  maintenances: IMaintenance[];
+  maintenances: WithId<IMaintenance>[];
 }
 
 const InformationView: React.FC<IProps> = ({date, maintenances}) => {
@@ -41,10 +41,20 @@ const InformationView: React.FC<IProps> = ({date, maintenances}) => {
     for (let i = 0; i < maintenances.length; ++i) {
       const maintenance = maintenances[i];
       if (adapter.isSameDay(maintenance.start, date)) {
-        planned.push(<InformationViewItem {...maintenance} />);
+        planned.push(
+          <InformationViewItem
+            key={`maintenance-${maintenance.id}`}
+            {...maintenance}
+          />
+        );
       }
       if (adapter.isSameDay(maintenance.end, date)) {
-        deadline.push(<InformationViewItem {...maintenance} />);
+        deadline.push(
+          <InformationViewItem
+            key={`maintenance-${maintenance.id}`}
+            {...maintenance}
+          />
+        );
       }
     }
     return [planned, deadline];

@@ -22,7 +22,7 @@ import {deleteAuto, getAutomobiles} from "../../../../api/auto";
 import styles from "./AutomobilePark.module.css";
 import {Alert} from "@mui/material";
 
-const AutomobilePark = ({}) => {
+const AutomobilePark = () => {
   const [feedback, setFeedback] = useState<
     | {type: React.ComponentProps<typeof Alert>["color"]; message: string}
     | undefined
