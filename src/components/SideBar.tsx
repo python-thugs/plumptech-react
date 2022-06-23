@@ -1,4 +1,5 @@
 import React, {useCallback, useMemo, useState} from "react";
+import {useLocation} from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
@@ -14,6 +15,7 @@ import {setUserAction} from "../store/auth";
 const Sidebar: React.FC<React.PropsWithChildren> = ({children}) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const location = useLocation();
 
   const handleMenuOpen = useCallback(() => {
     setOpen(!open);
@@ -25,11 +27,14 @@ const Sidebar: React.FC<React.PropsWithChildren> = ({children}) => {
 
   const mainActions = useMemo(
     () =>
-      React.Children.map(children, child => {
+      React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return child;
-        return React.cloneElement(child, {open});
+        return React.cloneElement(child, {
+          open,
+          selected: location.pathname === child.props.uri,
+        });
       }),
-    [children, open]
+    [children, open, location]
   );
 
   return (

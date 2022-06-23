@@ -6,12 +6,13 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
 
 const DrawerAction: React.FC<{
-  open: boolean;
+  open?: boolean;
   text: string;
   icon: JSX.Element;
   uri?: string;
+  selected?: boolean;
   onClick?: () => void;
-}> = ({open, text, icon, uri, onClick}) => {
+}> = ({open, text, icon, uri, selected, onClick}) => {
   const navigate = useNavigate();
 
   const handleClick = useCallback(() => {
@@ -21,7 +22,10 @@ const DrawerAction: React.FC<{
 
   return (
     <ListItem disablePadding onClick={handleClick}>
-      <ListItemButton className={`gap-2 ${open ? "pl-2 pr-6" : "px-2 "}`}>
+      <ListItemButton
+        className={`gap-2 ${open ? "pl-2 pr-6" : "px-2 "}`}
+        selected={selected}
+      >
         <ListItemIcon className="min-w-0 p-3">{icon}</ListItemIcon>
         <ListItemText
           sx={{

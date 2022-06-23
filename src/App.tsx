@@ -25,7 +25,7 @@ function App() {
       case PostEnum.Администратор:
         return [<AdminView />, null];
       case PostEnum["Старший техник"]:
-        return [<TechnicianView />, <TechnicianNavigation />];
+        return [<TechnicianView />, TechnicianNavigation()];
       default:
         return [null, null];
     }
