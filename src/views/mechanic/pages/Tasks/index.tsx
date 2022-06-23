@@ -1,6 +1,7 @@
 import {useCallback, useMemo, useState} from "react";
-import T from "@mui/material/Typography";
 import {useQuery} from "react-query";
+import T from "@mui/material/Typography";
+import Checkbox from "@mui/material/Checkbox";
 // list
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -11,16 +12,22 @@ import ru from "date-fns/locale/ru";
 import DateFnsAdapter from "@date-io/date-fns";
 // custom imports
 import {getMaintenances} from "../../../../api/maintenance";
-import {WithId, MaintenanceWithJobs} from "../../../../api/types";
-import Checkbox from "@mui/material/Checkbox";
+import {checkJob} from "../../../../api/job/checkJob";
+import {
+  WithId,
+  MaintenanceWithJobs,
+  IMaintenance,
+  JobWithMaterialsWithId,
+} from "../../../../api/types";
 import {useAppSelector} from "../../../../store";
 
 const adapter = new DateFnsAdapter({locale: ru});
 
+type JobType = WithId<JobWithMaterialsWithId> & {checked?: boolean};
+
 const TasksPage = () => {
   //#region state
-  const [selectedMaintenance, selectMaintenance] =
-    useState<WithId<MaintenanceWithJobs>>();
+  const [selectedMaintenanceId, selectMaintenance] = useState<number>();
 
   const userId = useAppSelector(state => state.auth.id);
   //#endregion
@@ -38,7 +45,16 @@ const TasksPage = () => {
 
   //#region callbacks
   const createHandleMaintenanceClick = useCallback(
-    (m: WithId<MaintenanceWithJobs>) => () => selectMaintenance(m),
+    (id: number) => () => selectMaintenance(id),
+    []
+  );
+
+  const createHandleJobCheckChange = useCallback(
+    (jobId: number) => () => {
+      checkJob(jobId).then(() => {
+        maintenancesQuery.refetch();
+      });
+    },
     []
   );
   //#endregion
@@ -51,8 +67,8 @@ const TasksPage = () => {
         <ListItemButton
           key={`maintenance-item-${m.id}`}
           className="p-3 rounded"
-          selected={selectedMaintenance?.id === m.id}
-          onClick={createHandleMaintenanceClick(m)}
+          selected={selectedMaintenanceId === m.id}
+          onClick={createHandleMaintenanceClick(m.id)}
         >
           <div className="flex flex-col gap-4 w-full">
             <T variant="subtitle1" component="h6" className="font-medium">
@@ -81,7 +97,24 @@ const TasksPage = () => {
         <Divider key={`maintenance-divider-${m.id}`} className="mx-6" />,
       ])
     );
-  }, [maintenancesQuery.data, selectedMaintenance]);
+  }, [maintenancesQuery.data, selectedMaintenanceId]);
+
+  const selectedMaintenance = useMemo(
+    () => maintenancesQuery.data?.find(m => m.id === selectedMaintenanceId),
+    [selectedMaintenanceId, maintenancesQuery.data]
+  );
+
+  const jobs = useMemo(() => {
+    return selectedMaintenance?.jobs?.map(j => (
+      <ListItem key={`job-item-${j.id}`} disablePadding className="py-1">
+        <Checkbox
+          checked={(j as JobType).checked}
+          onChange={createHandleJobCheckChange(j.id)}
+        />
+        <T variant="body1">{j.name}</T>
+      </ListItem>
+    ));
+  }, [selectedMaintenance]);
   //#endregion
 
   return (
@@ -100,18 +133,7 @@ const TasksPage = () => {
             <T variant="h4" component="h4" className="px-14">
               Список работ
             </T>
-            <List className="mt-5 px-4">
-              {selectedMaintenance.jobs?.map(j => (
-                <ListItem
-                  key={`job-item-${j.id}`}
-                  disablePadding
-                  className="py-1"
-                >
-                  <Checkbox />
-                  <T variant="body1">{j.name}</T>
-                </ListItem>
-              ))}
-            </List>
+            <List className="mt-5 px-4">{jobs}</List>
           </div>
           <div className="flex flex-col gap-4 p-6 border-0 border-solid border-l border-gray-200">
             <T variant="h4" component="h4">
