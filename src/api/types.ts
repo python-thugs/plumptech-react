@@ -31,8 +31,8 @@ export interface IMaintenance {
   jobs?: JobWithMaterials[];
 }
 export type MaintenanceWithId = WithId<IMaintenance>;
-export type MaintenanceWithJobs = IMaintenance & {
-  jobs: WithId<JobWithMaterialsWithId>;
+export type MaintenanceWithJobs = Omit<IMaintenance, "jobs"> & {
+  jobs?: WithId<JobWithMaterialsWithId>[];
 };
 
 export interface IAuto {

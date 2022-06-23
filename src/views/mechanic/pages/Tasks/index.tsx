@@ -3,6 +3,7 @@ import T from "@mui/material/Typography";
 import {useQuery} from "react-query";
 // list
 import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import Divider from "@mui/material/Divider";
 // date formatting
@@ -10,25 +11,30 @@ import ru from "date-fns/locale/ru";
 import DateFnsAdapter from "@date-io/date-fns";
 // custom imports
 import {getMaintenances} from "../../../../api/maintenance";
-import {MaintenanceWithId} from "../../../../api/types";
+import {WithId, MaintenanceWithJobs} from "../../../../api/types";
+import Checkbox from "@mui/material/Checkbox";
 
 const adapter = new DateFnsAdapter({locale: ru});
 
 const TasksPage = () => {
   //#region state
   const [selectedMaintenance, selectMaintenance] =
-    useState<MaintenanceWithId>();
+    useState<WithId<MaintenanceWithJobs>>();
   //#endregion
 
   //#region queries
-  const maintenancesQuery = useQuery("maintenances", () =>
-    getMaintenances({withJobs: true})
+  const maintenancesQuery = useQuery(
+    "maintenances",
+    () =>
+      getMaintenances({withJobs: true}) as Promise<
+        WithId<MaintenanceWithJobs>[]
+      >
   );
   //#endregion
 
   //#region callbacks
   const createHandleMaintenanceClick = useCallback(
-    (m: MaintenanceWithId) => () => selectMaintenance(m),
+    (m: WithId<MaintenanceWithJobs>) => () => selectMaintenance(m),
     []
   );
   //#endregion
@@ -84,6 +90,48 @@ const TasksPage = () => {
           {tasks}
         </List>
       </div>
+      {selectedMaintenance && (
+        <>
+          <div className="flex flex-col flex-1 py-6">
+            <T variant="h4" component="h4" className="px-14">
+              Список работ
+            </T>
+            <List className="mt-5 px-4">
+              {selectedMaintenance.jobs?.map(j => (
+                <ListItem
+                  key={`job-item-${j.id}`}
+                  disablePadding
+                  className="py-1"
+                >
+                  <Checkbox />
+                  <T variant="body1">{j.name}</T>
+                </ListItem>
+              ))}
+            </List>
+          </div>
+          <div className="flex flex-col gap-4 p-6 border-0 border-solid border-l border-gray-200">
+            <T variant="h4" component="h4">
+              {`${selectedMaintenance.auto.manufacturer} ${selectedMaintenance.auto.model}`}
+            </T>
+            <p className="flex flex-col m-0 gap-2">
+              <T variant="h6" component="span">
+                Государственный номер
+              </T>
+              <T variant="body1" component="span">
+                {selectedMaintenance.auto.licensePlate}
+              </T>
+            </p>
+            <p className="flex flex-col m-0 gap-2">
+              <T variant="h6" component="span">
+                Гаражный номер
+              </T>
+              <T variant="body1" component="span">
+                {selectedMaintenance.auto.garagePlate}
+              </T>
+            </p>
+          </div>
+        </>
+      )}
     </main>
   );
 };
