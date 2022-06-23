@@ -58,7 +58,7 @@ const ReportsPage = () => {
   //#region Queries
 
   const maintenancesQuery = useQuery(
-    "maintenances",
+    "maintenances-report",
     () =>
       getMaintenances({
         from,
