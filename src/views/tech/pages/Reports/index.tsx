@@ -2,6 +2,8 @@ import {useCallback, useMemo, useState} from "react";
 import {useQuery} from "react-query";
 import T from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/Button";
 // date pickers
 import Adapter from "@date-io/date-fns";
 import {ru} from "date-fns/locale";
@@ -12,15 +14,16 @@ import {DesktopDatePicker} from "@mui/x-date-pickers/DesktopDatePicker";
 import List from "@mui/material/List";
 import MuiListItem from "@mui/material/ListItem";
 import MuiListItemButton from "@mui/material/ListItemButton";
+// icons
+import ReloadIcon from "@mui/icons-material/Cached";
 // custom imports
-import {getMaintenances, getJobs} from "../../../../api/maintenance";
+import {getMaintenances} from "../../../../api/maintenance";
 import {
   MaintenanceWithId,
   MaintenanceWithJobs,
   IMaterial,
   WithId,
 } from "../../../../api/types";
-import Divider from "@mui/material/Divider";
 
 const ListButtonItem: React.FC<
   React.ComponentProps<typeof MuiListItemButton>
@@ -45,8 +48,8 @@ const TODAY = new Date();
 const ReportsPage = () => {
   //#region State
 
-  const [from, setFrom] = useState<Date | null>(TODAY);
-  const [to, setTo] = useState<Date | null>(null);
+  const [from, setFrom] = useState<Date | undefined>(TODAY);
+  const [to, setTo] = useState<Date>();
   const [selectedMaintenance, selectMaintenance] =
     useState<MaintenanceWithId>();
 
@@ -68,15 +71,32 @@ const ReportsPage = () => {
 
   const maintenancesQuery = useQuery(
     "maintenances",
-    () => getMaintenances(true) as Promise<WithId<MaintenanceWithJobs>[]>
+    () =>
+      getMaintenances({
+        from,
+        to,
+        withJobs: true,
+        onlyFinished: true,
+      }) as Promise<WithId<MaintenanceWithJobs>[]>,
+    {enabled: false}
   );
 
   //#endregion
 
   //#region Handlers
 
-  const handleFromDateChange = useCallback((d: Date | null) => setFrom(d), []);
-  const handleToDateChange = useCallback((d: Date | null) => setTo(d), []);
+  const handleFromDateChange = useCallback(
+    (d: Date | null) => setFrom(d || undefined),
+    []
+  );
+  const handleToDateChange = useCallback(
+    (d: Date | null) => setTo(d || undefined),
+    []
+  );
+
+  const handleReloadClick = useCallback(() => {
+    maintenancesQuery.refetch();
+  }, [maintenancesQuery]);
 
   const createHandleMaintenanceClick = useCallback(
     (m: MaintenanceWithId) => () => {
@@ -113,16 +133,26 @@ const ReportsPage = () => {
               renderInput={props => <TextField {...props} />}
             />
           </LocalizationProvider>
+          <IconButton
+            color="primary"
+            variant="contained"
+            className="h-full min-w-[3.5rem]"
+            onClick={handleReloadClick}
+          >
+            <ReloadIcon />
+          </IconButton>
         </div>
         <div className="flex flex-col gap-6 pt-4">
           <T variant="h4" component="h4" className="px-8">
             Информация
           </T>
           <p className="flex flex-row gap-6 items-baseline m-0 px-8">
-            <T variant="body1" className="font-medium">
+            <T variant="body1" component="span" className="font-medium">
               Количество завершенных ТО:
             </T>
-            <T variant="body1">{maintenancesQuery.data?.length || 0}</T>
+            <T variant="body1" component="span">
+              {maintenancesQuery.data?.length || 0}
+            </T>
           </p>
           <List className="gap-1 px-4">
             {maintenancesQuery.data?.map((j, i) => (
