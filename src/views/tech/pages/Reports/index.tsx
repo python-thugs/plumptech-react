@@ -55,18 +55,6 @@ const ReportsPage = () => {
 
   //#endregion
 
-  //#region memo
-
-  const selectedMaintenanceMaterials = useMemo(() => {
-    if (!selectedMaintenance) return;
-    return selectedMaintenance.jobs?.reduce<IMaterial[]>(
-      (res, job) => (job.materials ? res.concat(job.materials) : res),
-      []
-    );
-  }, [selectedMaintenance]);
-
-  //#endregion
-
   //#region Queries
 
   const maintenancesQuery = useQuery(
@@ -80,6 +68,52 @@ const ReportsPage = () => {
       }) as Promise<WithId<MaintenanceWithJobs>[]>,
     {enabled: false}
   );
+
+  //#endregion
+
+  //#region memo
+
+  const selectedMaintenanceMaterials = useMemo(() => {
+    if (!selectedMaintenance) return;
+    return selectedMaintenance.jobs?.reduce<IMaterial[]>(
+      (res, job) => (job.materials ? res.concat(job.materials) : res),
+      []
+    );
+  }, [selectedMaintenance]);
+
+  const totalMaterials = useMemo(() => {
+    if (!maintenancesQuery.data) return {};
+    let materialsMap: {[key: string]: IMaterial} = {};
+    maintenancesQuery.data
+      .reduce<IMaterial[]>((materials, {jobs}) => {
+        return jobs
+          ? jobs
+              .reduce<IMaterial[]>(
+                (jm, j) => (j.materials ? jm.concat(j.materials) : jm),
+                []
+              )
+              .concat(materials)
+          : materials;
+      }, [])
+      .forEach(m => {
+        if (materialsMap.hasOwnProperty(m.code)) {
+          materialsMap[m.code] = {
+            ...materialsMap[m.code],
+            price: materialsMap[m.code].price + m.price,
+          };
+        } else {
+          materialsMap[m.code] = m;
+        }
+      });
+    return materialsMap;
+  }, [maintenancesQuery.data]);
+
+  const totalPrice = useMemo(() => {
+    return Object.keys(totalMaterials).reduce(
+      (sum, key) => sum + totalMaterials[key].price,
+      0
+    );
+  }, [totalMaterials]);
 
   //#endregion
 
@@ -179,14 +213,21 @@ const ReportsPage = () => {
           </T>
         )}
         <List>
-          {selectedMaintenanceMaterials &&
-            selectedMaintenanceMaterials?.map(m => (
-              <ListItem className="gap-2">
-                <span>{m.name}</span>
-                <Divider className="flex-1 self-end mb-1 border-dotted" />
-                <span>{m.price} ₽</span>
-              </ListItem>
-            ))}
+          {selectedMaintenanceMaterials
+            ? selectedMaintenanceMaterials?.map(m => (
+                <ListItem key={`material-price-${m.code}`} className="gap-2">
+                  <span>{m.name}</span>
+                  <Divider className="flex-1 self-end mb-1 border-dotted" />
+                  <span>{m.price} ₽</span>
+                </ListItem>
+              ))
+            : Object.keys(totalMaterials).map(key => (
+                <ListItem key={`material-price-${key}`} className="gap-2">
+                  <span>{totalMaterials[key].name}</span>
+                  <Divider className="flex-1 self-end mb-1 border-dotted" />
+                  <span>{totalMaterials[key].price} ₽</span>
+                </ListItem>
+              ))}
         </List>
         <Divider variant="fullWidth" />
         <T
@@ -195,7 +236,10 @@ const ReportsPage = () => {
           className="font-medium text-right mt-3 uppercase"
         >
           Сумма:{" "}
-          {selectedMaintenanceMaterials?.reduce((sum, m) => sum + m.price, 0)} ₽
+          {selectedMaintenanceMaterials
+            ? selectedMaintenanceMaterials.reduce((sum, m) => sum + m.price, 0)
+            : totalPrice}
+          {" ₽"}
         </T>
       </div>
     </main>
