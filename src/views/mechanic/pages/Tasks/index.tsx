@@ -1,4 +1,4 @@
-import {useMemo} from "react";
+import {useCallback, useMemo, useState} from "react";
 import T from "@mui/material/Typography";
 import {useQuery} from "react-query";
 // list
@@ -10,18 +10,30 @@ import ru from "date-fns/locale/ru";
 import DateFnsAdapter from "@date-io/date-fns";
 // custom imports
 import {getMaintenances} from "../../../../api/maintenance";
+import {MaintenanceWithId} from "../../../../api/types";
 
 const adapter = new DateFnsAdapter({locale: ru});
 
 const TasksPage = () => {
+  //#region state
+  const [selectedMaintenance, selectMaintenance] =
+    useState<MaintenanceWithId>();
+  //#endregion
+
   //#region queries
   const maintenancesQuery = useQuery("maintenances", () =>
     getMaintenances({withJobs: true})
   );
   //#endregion
 
-  //#region memo
+  //#region callbacks
+  const createHandleMaintenanceClick = useCallback(
+    (m: MaintenanceWithId) => () => selectMaintenance(m),
+    []
+  );
+  //#endregion
 
+  //#region memo
   const tasks = useMemo(() => {
     if (!maintenancesQuery.data) return [];
     return ([] as JSX.Element[]).concat(
@@ -29,6 +41,8 @@ const TasksPage = () => {
         <ListItemButton
           key={`maintenance-item-${m.id}`}
           className="p-3 rounded"
+          selected={selectedMaintenance?.id === m.id}
+          onClick={createHandleMaintenanceClick(m)}
         >
           <div className="flex flex-col gap-4 w-full">
             <T variant="subtitle1" component="h6" className="font-medium">
@@ -57,8 +71,7 @@ const TasksPage = () => {
         <Divider key={`maintenance-divider-${m.id}`} className="mx-6" />,
       ])
     );
-  }, [maintenancesQuery.data]);
-
+  }, [maintenancesQuery.data, selectedMaintenance]);
   //#endregion
 
   return (
