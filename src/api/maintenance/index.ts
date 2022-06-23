@@ -1,6 +1,7 @@
 import {joinPath as rootJoin} from "..";
 import {WithId, IAuto, IStatus, IMaintenance} from "../types";
 export {getMaintenances} from "./getMaintenances";
+export {getJobs} from "./getJobs";
 
 export function joinPath(...paths: string[]) {
   return rootJoin("maintenance", ...paths);
