@@ -13,6 +13,7 @@ import DateFnsAdapter from "@date-io/date-fns";
 import {getMaintenances} from "../../../../api/maintenance";
 import {WithId, MaintenanceWithJobs} from "../../../../api/types";
 import Checkbox from "@mui/material/Checkbox";
+import {useAppSelector} from "../../../../store";
 
 const adapter = new DateFnsAdapter({locale: ru});
 
@@ -20,15 +21,18 @@ const TasksPage = () => {
   //#region state
   const [selectedMaintenance, selectMaintenance] =
     useState<WithId<MaintenanceWithJobs>>();
+
+  const userId = useAppSelector(state => state.auth.id);
   //#endregion
 
   //#region queries
   const maintenancesQuery = useQuery(
     "maintenances",
     () =>
-      getMaintenances({withJobs: true}) as Promise<
-        WithId<MaintenanceWithJobs>[]
-      >
+      getMaintenances({
+        withParam: ["jobs", "mechanic"],
+        mechanic: userId,
+      }) as Promise<WithId<MaintenanceWithJobs>[]>
   );
   //#endregion
 
