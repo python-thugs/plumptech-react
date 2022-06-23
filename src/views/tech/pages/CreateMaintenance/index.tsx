@@ -23,12 +23,7 @@ import AddIcon from "@mui/icons-material/Add";
 // custom imports
 import MaterialsTable from "./MaterialsTable";
 import {getAutomobiles} from "../../../../api/auto";
-import {
-  IAuto,
-  JobWithMaterials,
-  NonNullable,
-  WithId,
-} from "../../../../api/types";
+import {IAuto, JobWithMaterials, WithId} from "../../../../api/types";
 import {useNavigate} from "react-router-dom";
 import {createMaintenance} from "../../../../api/maintenance/create";
 
@@ -179,7 +174,7 @@ const CreateMaintenancePage = () => {
       status: 1,
       jobs,
     })
-      .then(result => {
+      .then(() => {
         navigate("/", {replace: true});
       })
       .catch(err => {

@@ -41,5 +41,3 @@ export interface IAuto {
 export interface IStatus {
   name: string;
 }
-
-export type NonNullable<T> = Exclude<T, null | undefined>;
