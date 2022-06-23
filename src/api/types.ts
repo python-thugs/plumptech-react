@@ -1,4 +1,4 @@
-import type {JobWithMaterials} from "./job/types";
+import type {JobWithMaterials, JobWithMaterialsWithId} from "./job/types";
 export * from "./job/types";
 
 export interface IEmployee {
@@ -31,6 +31,9 @@ export interface IMaintenance {
   jobs?: JobWithMaterials[];
 }
 export type MaintenanceWithId = WithId<IMaintenance>;
+export type MaintenanceWithJobs = IMaintenance & {
+  jobs: WithId<JobWithMaterialsWithId>;
+};
 
 export interface IAuto {
   licensePlate: string;

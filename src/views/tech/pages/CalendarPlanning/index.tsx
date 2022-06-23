@@ -17,7 +17,7 @@ const CalendarPlanning = () => {
   const [currentMonth, setMonth] = useState(new Date());
   const [selectedDate, setDate] = useState(new Date());
   // react-query
-  const maintenances = useQuery("maintenances", getMaintenances);
+  const maintenances = useQuery("maintenances", () => getMaintenances());
 
   const selectPreviousMonth = useCallback(() => {
     setMonth(adapter.addMonths(currentMonth, -1));
