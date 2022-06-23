@@ -2,6 +2,7 @@ import {useCallback, useMemo, useState} from "react";
 import {useQuery} from "react-query";
 import T from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
 // list
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -20,6 +21,7 @@ import {
   JobWithMaterialsWithId,
 } from "../../../../api/types";
 import {useAppSelector} from "../../../../store";
+import {finish} from "../../../../api/maintenance/finish";
 
 const adapter = new DateFnsAdapter({locale: ru});
 
@@ -57,6 +59,7 @@ const TasksPage = () => {
     },
     []
   );
+
   //#endregion
 
   //#region memo
@@ -117,6 +120,13 @@ const TasksPage = () => {
   }, [selectedMaintenance]);
   //#endregion
 
+  const handleMaintenanceFinish = useCallback(() => {
+    if (!selectedMaintenanceId) return;
+    finish(selectedMaintenanceId).then(() => {
+      maintenancesQuery.refetch();
+    });
+  }, [selectedMaintenanceId, maintenancesQuery]);
+
   return (
     <main className="flex flex-row h-full w-full">
       <div className="flex flex-col gap-3 border-0 border-solid border-r border-gray-200 h-full overflow-y-hidden">
@@ -134,6 +144,19 @@ const TasksPage = () => {
               Список работ
             </T>
             <List className="mt-5 px-4">{jobs}</List>
+            <Button
+              className="m-6"
+              disabled={
+                !selectedMaintenance.jobs?.reduce((b, j) => {
+                  return b && (j as JobType).checked ? true : false;
+                }, true)
+              }
+              onClick={handleMaintenanceFinish}
+              color="primary"
+              variant="contained"
+            >
+              Выполнить
+            </Button>
           </div>
           <div className="flex flex-col gap-4 p-6 border-0 border-solid border-l border-gray-200">
             <T variant="h4" component="h4">
