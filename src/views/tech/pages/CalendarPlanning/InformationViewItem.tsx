@@ -14,11 +14,18 @@ const InformationViewItem: React.FC<IProps> = ({...maintenance}) => {
           <span>
             {`${maintenance.auto.manufacturer} ${maintenance.auto.model}`}
           </span>
-          <span className="text-xs">Срок окончания</span>
+          <span className="text-xs">
+            {maintenance.end ? "Завершено" : "Срок окончания"}
+          </span>
         </p>
         <p className="flex flex-row m-0 justify-between items-baseline text-xs">
           <span>{maintenance.auto.licensePlate}</span>
-          <span>{adapter.format(maintenance.deadline, "fullDate")}</span>
+          <span>
+            {adapter.format(
+              maintenance.end || maintenance.deadline,
+              "fullDate"
+            )}
+          </span>
         </p>
       </ListItemButton>
     </ListItem>
