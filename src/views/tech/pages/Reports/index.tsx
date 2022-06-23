@@ -63,7 +63,7 @@ const ReportsPage = () => {
       getMaintenances({
         from,
         to,
-        withJobs: true,
+        withParam: ["jobs"],
         onlyFinished: true,
       }) as Promise<WithId<MaintenanceWithJobs>[]>,
     {enabled: false}

@@ -29,7 +29,7 @@ const persistConfig: PersistConfig<any> = {
   debug: process.env.NODE_ENV === "development",
 };
 export const store = configureStore({
-  reducer: persistReducer(
+  reducer: persistReducer<{auth: ReturnType<typeof authReducer>}>(
     persistConfig,
     combineReducers({
       auth: authReducer,

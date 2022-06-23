@@ -7,7 +7,7 @@ import Sidebar from "./components/SideBar";
 import LoginPage from "./views/default/pages/LoginPage";
 import AdminView from "./views/admin";
 import TechnicianView, {Navigation as TechnicianNavigation} from "./views/tech";
-import MechanicView from "./views/mechanic";
+import MechanicView, {Navigation as MechanicNavigation} from "./views/mechanic";
 import {useAppSelector} from "./store";
 import {PostEnum} from "./api/types";
 
@@ -28,7 +28,7 @@ function App() {
       case PostEnum["Старший техник"]:
         return [<TechnicianView />, TechnicianNavigation()];
       case PostEnum.Автослесарь:
-        return [<MechanicView />, null];
+        return [<MechanicView />, MechanicNavigation()];
       default:
         return [null, null];
     }
