@@ -30,6 +30,7 @@ export interface IMaintenance {
   status: IStatus;
   jobs?: JobWithMaterials[];
 }
+export type MaintenanceWithId = WithId<IMaintenance>;
 
 export interface IAuto {
   licensePlate: string;
