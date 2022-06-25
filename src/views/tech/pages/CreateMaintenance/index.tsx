@@ -166,7 +166,7 @@ const CreateMaintenancePage = () => {
   //#endregion
 
   const handleMaintenanceCreate = useCallback(() => {
-    if (!auto || !endDate || !startDate) return;
+    if (!auto || !endDate || !startDate || jobs.length === 0) return;
     createMaintenance({
       start: startDate,
       deadline: endDate,
