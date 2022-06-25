@@ -21,5 +21,5 @@ export const convertMaintenanceDates = (
   ...m,
   start: new Date(m.start),
   deadline: new Date(m.deadline),
-  end: new Date(m.end),
+  end: m.end ? new Date(m.end) : undefined,
 });
