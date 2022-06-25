@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -13,6 +13,8 @@ import {getPosts} from "../../../../../api/post";
 import {signUp} from "../../../../../api/auth";
 import {IEmployee, PostEnum} from "../../../../../api/types";
 import {changeUser} from "../../../../../api/users";
+import {useAppDispatch, useAppSelector} from "../../../../../store";
+import {actions as PostsActions} from "../../../../../store/posts";
 
 export type DialogCloseHandler<T = any> = (value?: T) => void;
 const UserDialogTypes = ["create", "edit", undefined] as const;
@@ -32,19 +34,16 @@ interface IProps {
   onClose: DialogCloseHandler<IEmployee>;
 }
 
-const EmptyMenuItem = <MenuItem key="menu-item-0" value={0}></MenuItem>;
-
 const UserDialog: React.FC<IProps> = ({type, user, onClose}) => {
-  console.debug("> UserDialog render %d", Date.now());
-  const [postElements, setPostElements] = useState<JSX.Element[]>([
-    EmptyMenuItem,
-  ]);
   const [personName, setPersonName] = useState<string>(user ? user.name : "");
   const [userName, setUserName] = useState<string>(user ? user.username : "");
   const [selectedPost, setPost] = useState<PostEnum | null>(
     user ? user.post.id : 0
   );
   const [error, setError] = useState<string[]>([]);
+
+  const dispatch = useAppDispatch();
+  const posts = useAppSelector(state => state.posts);
 
   useEffect(() => {
     if (user) {
@@ -55,17 +54,22 @@ const UserDialog: React.FC<IProps> = ({type, user, onClose}) => {
   }, [user]);
 
   useEffect(() => {
+    if (posts.length) return;
     getPosts().then(posts => {
       if (!selectedPost) setPost(posts[0].id);
-      setPostElements(
-        posts.map(post => (
-          <MenuItem key={`post-select-item-${post.id}`} value={post.id}>
-            {post.name}
-          </MenuItem>
-        ))
-      );
+      dispatch(PostsActions.set(posts));
     });
-  }, [selectedPost]);
+  }, []);
+
+  const postElements = useMemo(
+    () =>
+      posts.map(post => (
+        <MenuItem key={`post-select-item-${post.id}`} value={post.id}>
+          {post.name}
+        </MenuItem>
+      )),
+    [posts]
+  );
 
   const handlePostSelect = useCallback(
     (e: SelectChangeEvent<number | null>) => {

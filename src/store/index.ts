@@ -15,6 +15,7 @@ import storage from "redux-persist/lib/storage";
 // @ts-ignore
 import logger from "redux-logger";
 import authReducer from "./auth";
+import postsReducer from "./posts";
 
 function getAppKey() {
   if (!process.env.REACT_APP_APP_KEY) {
@@ -28,12 +29,16 @@ const persistConfig: PersistConfig<any> = {
   storage,
   debug: process.env.NODE_ENV === "development",
 };
+
+const combinedReducers = combineReducers({
+  auth: authReducer,
+  posts: postsReducer,
+});
+
 export const store = configureStore({
-  reducer: persistReducer<{auth: ReturnType<typeof authReducer>}>(
+  reducer: persistReducer<ReturnType<typeof combinedReducers>>(
     persistConfig,
-    combineReducers({
-      auth: authReducer,
-    })
+    combinedReducers
   ),
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
