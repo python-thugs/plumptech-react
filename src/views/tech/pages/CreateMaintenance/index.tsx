@@ -109,13 +109,13 @@ const CreateMaintenancePage = () => {
   //#endregion
 
   //#region Dates management
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(TODAY);
   const handleStartDateChange = useCallback((newDate: Date | null) => {
     if (!newDate || Number.isNaN(newDate.getDate())) return;
     setStartDate(newDate);
   }, []);
 
-  const [endDate, setEndDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>(TODAY);
   const handleEndDateChange = useCallback((newDate: Date | null) => {
     if (!newDate || Number.isNaN(newDate.getDate())) return;
     setEndDate(newDate);
