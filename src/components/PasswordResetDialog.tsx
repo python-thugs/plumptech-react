@@ -43,7 +43,7 @@ const PasswordResetDialog: React.FC<IProps> = ({id, open, onClose}) => {
     [inputs]
   );
 
-  const closeWithoutChanges = useCallback(() => onClose, [onClose]);
+  const closeWithoutChanges = useCallback(() => onClose(), [onClose]);
 
   const closeSavingChanges = useCallback(() => {
     const {password, confirm} = inputs;
