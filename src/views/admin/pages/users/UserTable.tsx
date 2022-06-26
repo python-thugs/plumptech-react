@@ -133,7 +133,7 @@ const UserTable: React.FC<
           checkbox
           name="ФИО сотрудника"
           userName="Имя пользователя"
-          post="Имя пользователя"
+          post="Должность"
           actions="Действия"
         />
       </TableHead>
